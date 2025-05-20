@@ -64,17 +64,16 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
     });
   }
 
-  // Function to determine stroke dasharray based on data
-  const getStrokeDashArray = (dataPoint: VelocityData) => {
-    return dataPoint.date === "Projected" ? "5 5" : "0";
-  };
-
   // Add standard deviation range for completed points
   const dataWithDeviation = velocityHistory.map(item => ({
     ...item,
     upperBound: item.completedPoints + stdDev,
     lowerBound: Math.max(0, item.completedPoints - stdDev)
   }));
+
+  // Create different data series for actual and projected
+  const actualData = predictedData.filter(item => item.date !== "Projected");
+  const projectedData = predictedData.filter(item => item.date === "Projected");
 
   return (
     <div className="space-y-4 p-4">
@@ -98,18 +97,16 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
             />
             <Legend />
             <ReferenceLine y={averageVelocity} stroke="#ff7300" strokeDasharray="3 3" label="Average" />
+            
+            {/* Actual data solid lines */}
             <Line
               type="monotone"
               dataKey="plannedPoints"
               stroke="#8884d8"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={(dataPoint) => {
-                if (typeof dataPoint === 'object' && dataPoint && 'date' in dataPoint) {
-                  return (dataPoint as VelocityData).date === "Projected" ? "5 5" : "0";
-                }
-                return "0";
-              }}
+              data={actualData}
+              name="Planned Points (Actual)"
             />
             <Line
               type="monotone"
@@ -117,12 +114,31 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#82ca9d"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={(dataPoint) => {
-                if (typeof dataPoint === 'object' && dataPoint && 'date' in dataPoint) {
-                  return (dataPoint as VelocityData).date === "Projected" ? "5 5" : "0";
-                }
-                return "0";
-              }}
+              data={actualData}
+              name="Completed Points (Actual)"
+              connectNulls
+            />
+            
+            {/* Projected data dashed lines */}
+            <Line
+              type="monotone"
+              dataKey="plannedPoints"
+              stroke="#8884d8"
+              activeDot={{ r: 8 }}
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              data={projectedData}
+              name="Planned Points (Projected)"
+            />
+            <Line
+              type="monotone"
+              dataKey="completedPoints"
+              stroke="#82ca9d"
+              activeDot={{ r: 8 }}
+              strokeWidth={2}
+              strokeDasharray="5 5"
+              data={projectedData}
+              name="Completed Points (Projected)"
               connectNulls
             />
           </LineChart>
