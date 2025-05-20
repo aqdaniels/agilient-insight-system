@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Form,
@@ -17,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface VariabilityFactorsProps {
@@ -62,7 +61,7 @@ const VariabilityFactors: React.FC<VariabilityFactorsProps> = ({
         <h2 className="text-lg font-medium">Variability Factors</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure how much natural variability exists in your team's performance and work patterns. These settings affect the uncertainty range in the simulation results.</p>

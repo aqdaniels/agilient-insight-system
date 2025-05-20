@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Form,
@@ -19,7 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoCircle, Play, Settings2, Loader2 } from "lucide-react";
+import { Info, Play, Settings2, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProgressBar } from "@/components/design-system";
 
@@ -82,7 +81,7 @@ const SimulationControl: React.FC<SimulationControlProps> = ({
         <h2 className="text-lg font-medium">Simulation Controls</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure the technical parameters of your simulation. These settings determine how the simulation is run and the level of detail in the results.</p>
@@ -218,7 +217,7 @@ const SimulationControl: React.FC<SimulationControlProps> = ({
                 </div>
                 <Loader2 className="animate-spin text-muted-foreground" />
               </div>
-              <ProgressBar value={progress} variant="primary" />
+              <ProgressBar value={progress} variant="info" />
             </CardContent>
           </Card>
         ) : (

@@ -1,8 +1,7 @@
-
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge, ProgressBar, StatusIndicator } from "@/components/design-system";
 import { SimulationScenario } from "../types";
-import { Badge, StatusIndicator } from "@/components/design-system";
 import { AlertTriangle, CheckCircle, Clock, Hash, BarChart3 } from "lucide-react";
 
 interface QuickPreviewPanelProps {
@@ -10,8 +9,43 @@ interface QuickPreviewPanelProps {
 }
 
 const QuickPreviewPanel: React.FC<QuickPreviewPanelProps> = ({
-  scenario,
+  scenario
 }) => {
+  // Calculate completion percentage based on filled fields
+  const calculateCompleteness = () => {
+    let totalFields = 0;
+    let filledFields = 0;
+    
+    // Check scenario basic info
+    totalFields += 2;
+    if (scenario.name) filledFields += 1;
+    if (scenario.description) filledFields += 1;
+    
+    // Check team configuration
+    totalFields += 5;
+    const teamConfig = scenario.teamConfiguration;
+    if (teamConfig.teamSize > 0) filledFields += 1;
+    if (teamConfig.averageVelocity > 0) filledFields += 1;
+    if (teamConfig.seniorityLevel > 0) filledFields += 1;
+    if (teamConfig.onboardingTime >= 0) filledFields += 1;
+    if (teamConfig.attritionRisk >= 0) filledFields += 1;
+    
+    // Process parameters
+    totalFields += 3;
+    const processParams = scenario.processParameters;
+    if (processParams.sprintLength > 0) filledFields += 1;
+    if (processParams.ceremonyOverhead >= 0) filledFields += 1;
+    if (processParams.contextSwitchingImpact >= 0) filledFields += 1;
+    
+    // GenAI configuration
+    totalFields += 2;
+    const genAIConfig = scenario.genAIConfiguration;
+    if (genAIConfig.effectivenessMultiplier > 0) filledFields += 1;
+    if (genAIConfig.coveragePercentage > 0) filledFields += 1;
+    
+    return (filledFields / totalFields) * 100;
+  };
+
   const validationResults = useMemo(() => {
     // These would be actual calculated values in a real app
     return {

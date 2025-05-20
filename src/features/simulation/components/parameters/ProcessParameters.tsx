@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Form,
@@ -17,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { Badge } from "@/components/design-system";
 
 interface ProcessParametersProps {
@@ -74,7 +73,7 @@ const ProcessParametersComponent: React.FC<ProcessParametersProps> = ({
         <h2 className="text-lg font-medium">Process Parameters</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure the parameters that define your development process and methodology. These settings determine how work flows through the system.</p>

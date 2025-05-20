@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Form,
@@ -17,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoCircle, Calendar, Plus, Minus } from "lucide-react";
+import { Info, Calendar, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ExternalFactorsProps {
@@ -73,7 +72,7 @@ const ExternalFactors: React.FC<ExternalFactorsProps> = ({
         <h2 className="text-lg font-medium">External Factors</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure external factors that impact team availability and productivity, such as holidays, time off, and training.</p>

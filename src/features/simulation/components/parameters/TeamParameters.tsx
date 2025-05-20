@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Form,
@@ -12,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { TeamConfiguration } from "../../types";
 import { useForm } from "react-hook-form";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { 
   Tooltip,
   TooltipContent,
@@ -43,7 +42,7 @@ const TeamParameters: React.FC<TeamParametersProps> = ({
         <h2 className="text-lg font-medium">Team Parameters</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure your team's composition and capabilities. These parameters affect velocity calculations and resource allocation in the simulation.</p>

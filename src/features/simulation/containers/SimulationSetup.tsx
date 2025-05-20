@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -133,17 +132,15 @@ const SimulationSetup: React.FC = () => {
           <Button 
             variant="outline"
             onClick={handleSaveScenario}
-            leftIcon={<Save />}
           >
-            Save Scenario
+            <Save className="mr-2 h-4 w-4" /> Save Scenario
           </Button>
           <Button 
-            variant="primary"
+            variant="default"
             onClick={handleRunSimulation}
             disabled={isRunning || !scenario.name}
-            leftIcon={<Play />}
           >
-            {isRunning ? "Running..." : "Run Simulation"}
+            <Play className="mr-2 h-4 w-4" /> {isRunning ? "Running..." : "Run Simulation"}
           </Button>
         </div>
       </div>
