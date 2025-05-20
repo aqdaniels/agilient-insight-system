@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { SimulationParameters } from "../containers/SimulationDashboard";
 import { Button } from "@/components/design-system";
@@ -12,7 +11,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   parameters,
   onParametersChange
 }) => {
-  const [params, setParams] = useState<SimulationParameters>({ ...parameters });
+  const [params, setParams] = useState<SimulationParameters>(parameters);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -28,13 +27,16 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
     // Handle nested properties
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setParams(prevParams => ({
-        ...prevParams,
-        [parent]: {
-          ...prevParams[parent as keyof SimulationParameters],
-          [child]: newValue
-        }
-      }));
+      setParams(prevParams => {
+        // Create a new object instead of using spread on potentially undefined values
+        return {
+          ...prevParams,
+          [parent]: {
+            ...prevParams[parent as keyof SimulationParameters] as object,
+            [child]: newValue
+          }
+        };
+      });
     } else {
       setParams(prevParams => ({
         ...prevParams,
@@ -49,7 +51,7 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
   };
 
   const handleReset = () => {
-    setParams({ ...parameters });
+    setParams(parameters);
   };
 
   return (
