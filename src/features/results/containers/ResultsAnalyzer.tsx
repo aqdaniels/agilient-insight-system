@@ -3,9 +3,11 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/design-system";
 import { Skeleton } from "@/components/ui/skeleton";
-import UtilizationChart from "../components/UtilizationChart";
-import CostBreakdown from "../components/CostBreakdown";
-import { Download, ChevronDown, ChevronUp, BarChart } from "lucide-react";
+import { Download, ChevronDown, ChevronUp, BarChart, Share2 } from "lucide-react";
+import { toast } from "sonner";
+
+// Import our new Results Analysis Dashboard
+import ResultsAnalysisDashboard from "./ResultsAnalysisDashboard";
 
 // Types
 export interface SimulationResult {
@@ -77,22 +79,16 @@ const ResultsAnalyzer: React.FC = () => {
     queryFn: () => fetchSimulationResult('sim-001'),
   });
   
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    utilization: true,
-    cost: true,
-    recommendations: false
-  });
-  
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+  const [viewMode, setViewMode] = useState<'summary' | 'advanced'>('summary');
   
   const handleExportReport = () => {
-    console.log("Exporting report");
+    toast.success("Report export started");
     // Implementation would export the report
+  };
+
+  const handleShareResults = () => {
+    toast.success("Link copied to clipboard");
+    // Implementation would handle sharing functionality
   };
 
   if (isLoading) {
@@ -103,7 +99,6 @@ const ResultsAnalyzer: React.FC = () => {
           <Skeleton className="h-10 w-32" />
         </div>
         <Skeleton className="h-40 w-full" />
-        <Skeleton className="h-80 w-full" />
         <Skeleton className="h-80 w-full" />
       </div>
     );
@@ -124,138 +119,149 @@ const ResultsAnalyzer: React.FC = () => {
         <div className="flex space-x-2">
           <Button 
             variant="outline" 
+            onClick={handleShareResults}
+            leftIcon={<Share2 size={16} />}
+          >
+            Share Results
+          </Button>
+          <Button 
+            variant="outline" 
             onClick={handleExportReport}
             leftIcon={<Download size={16} />}
           >
             Export Report
           </Button>
+          <Button 
+            variant={viewMode === 'advanced' ? 'primary' : 'outline'}
+            onClick={() => setViewMode(viewMode === 'summary' ? 'advanced' : 'summary')}
+          >
+            {viewMode === 'summary' ? 'Advanced Analysis' : 'Summary View'}
+          </Button>
         </div>
       </div>
 
-      <div className="border rounded-lg p-4 bg-card">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-          <div>
-            <h3 className="font-medium text-lg">{result.name}</h3>
-            <p className="text-sm text-muted-foreground">
-              Completed on {new Date(result.completedAt).toLocaleString()}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary">
-              {result.metrics.duration} days
-            </span>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/15 text-secondary">
-              ${result.metrics.cost.toLocaleString()}
-            </span>
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-              result.metrics.confidenceLevel >= 80 ? 'bg-success/15 text-success' :
-              result.metrics.confidenceLevel >= 60 ? 'bg-warning/15 text-warning' :
-              'bg-error/15 text-error'
-            }`}>
-              {result.metrics.confidenceLevel}% confidence
-            </span>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-muted/30 p-3 rounded-md">
-            <div className="text-xs text-muted-foreground">Duration</div>
-            <div className="text-xl font-bold">{result.metrics.duration} days</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-md">
-            <div className="text-xs text-muted-foreground">Total Cost</div>
-            <div className="text-xl font-bold">${result.metrics.cost.toLocaleString()}</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-md">
-            <div className="text-xs text-muted-foreground">Team Utilization</div>
-            <div className="text-xl font-bold">{result.metrics.teamUtilization}%</div>
-          </div>
-          <div className="bg-muted/30 p-3 rounded-md">
-            <div className="text-xs text-muted-foreground">Risk Exposure</div>
-            <div className="text-xl font-bold">{result.metrics.riskExposure}%</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="border rounded-lg bg-card overflow-hidden">
-        <div 
-          className="flex justify-between items-center p-4 cursor-pointer"
-          onClick={() => toggleSection('utilization')}
-        >
-          <h3 className="font-medium text-lg flex items-center">
-            <BarChart size={18} className="mr-2" />
-            Resource Utilization
-          </h3>
-          <button className="text-muted-foreground">
-            {expandedSections.utilization ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
-        </div>
-        
-        {expandedSections.utilization && (
-          <div className="p-4 pt-0">
-            <UtilizationChart utilizationData={result.utilizationData} />
-          </div>
-        )}
-      </div>
-
-      <div className="border rounded-lg bg-card overflow-hidden">
-        <div 
-          className="flex justify-between items-center p-4 cursor-pointer"
-          onClick={() => toggleSection('cost')}
-        >
-          <h3 className="font-medium text-lg flex items-center">
-            <BarChart size={18} className="mr-2" />
-            Cost Breakdown
-          </h3>
-          <button className="text-muted-foreground">
-            {expandedSections.cost ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
-        </div>
-        
-        {expandedSections.cost && (
-          <div className="p-4 pt-0">
-            <CostBreakdown costData={result.costData} />
-          </div>
-        )}
-      </div>
-
-      <div className="border rounded-lg bg-card overflow-hidden">
-        <div 
-          className="flex justify-between items-center p-4 cursor-pointer"
-          onClick={() => toggleSection('recommendations')}
-        >
-          <h3 className="font-medium text-lg flex items-center">
-            <BarChart size={18} className="mr-2" />
-            Optimization Recommendations
-          </h3>
-          <button className="text-muted-foreground">
-            {expandedSections.recommendations ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-          </button>
-        </div>
-        
-        {expandedSections.recommendations && (
-          <div className="p-4 pt-0">
-            <div className="space-y-4">
-              <div className="border-l-4 border-info p-4 bg-info/5 rounded-r-md">
-                <h4 className="font-medium mb-1">Resource Balancing</h4>
-                <p className="text-sm">Frontend development resources appear to be overutilized in Sprints 1 and 7. Consider redistributing tasks to balance workload across the team.</p>
+      {viewMode === 'summary' ? (
+        <div className="space-y-6">
+          <div className="border rounded-lg p-4 bg-card">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+              <div>
+                <h3 className="font-medium text-lg">{result.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Completed on {new Date(result.completedAt).toLocaleString()}
+                </p>
               </div>
-              
-              <div className="border-l-4 border-success p-4 bg-success/5 rounded-r-md">
-                <h4 className="font-medium mb-1">Cost Efficiency</h4>
-                <p className="text-sm">Backend development is slightly over budget. Look for opportunities to optimize implementation approach for remaining features.</p>
+              <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/15 text-primary">
+                  {result.metrics.duration} days
+                </span>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary/15 text-secondary">
+                  ${result.metrics.cost.toLocaleString()}
+                </span>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  result.metrics.confidenceLevel >= 80 ? 'bg-success/15 text-success' :
+                  result.metrics.confidenceLevel >= 60 ? 'bg-warning/15 text-warning' :
+                  'bg-error/15 text-error'
+                }`}>
+                  {result.metrics.confidenceLevel}% confidence
+                </span>
               </div>
-              
-              <div className="border-l-4 border-warning p-4 bg-warning/5 rounded-r-md">
-                <h4 className="font-medium mb-1">Risk Mitigation</h4>
-                <p className="text-sm">Consider adding a buffer sprint to account for the identified technical risks, especially around external dependencies.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-muted/30 p-3 rounded-md">
+                <div className="text-xs text-muted-foreground">Duration</div>
+                <div className="text-xl font-bold">{result.metrics.duration} days</div>
+              </div>
+              <div className="bg-muted/30 p-3 rounded-md">
+                <div className="text-xs text-muted-foreground">Total Cost</div>
+                <div className="text-xl font-bold">${result.metrics.cost.toLocaleString()}</div>
+              </div>
+              <div className="bg-muted/30 p-3 rounded-md">
+                <div className="text-xs text-muted-foreground">Team Utilization</div>
+                <div className="text-xl font-bold">{result.metrics.teamUtilization}%</div>
+              </div>
+              <div className="bg-muted/30 p-3 rounded-md">
+                <div className="text-xs text-muted-foreground">Risk Exposure</div>
+                <div className="text-xl font-bold">{result.metrics.riskExposure}%</div>
               </div>
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="border rounded-lg bg-card overflow-hidden">
+            <div 
+              className="flex justify-between items-center p-4 cursor-pointer"
+              onClick={() => {}}
+            >
+              <h3 className="font-medium text-lg flex items-center">
+                <BarChart size={18} className="mr-2" />
+                Resource Utilization
+              </h3>
+              <ChevronUp size={18} className="text-muted-foreground" />
+            </div>
+            
+            <div className="p-4 pt-0">
+              <UtilizationChart utilizationData={result.utilizationData} />
+            </div>
+          </div>
+
+          <div className="border rounded-lg bg-card overflow-hidden">
+            <div 
+              className="flex justify-between items-center p-4 cursor-pointer"
+              onClick={() => {}}
+            >
+              <h3 className="font-medium text-lg flex items-center">
+                <BarChart size={18} className="mr-2" />
+                Cost Breakdown
+              </h3>
+              <ChevronUp size={18} className="text-muted-foreground" />
+            </div>
+            
+            <div className="p-4 pt-0">
+              <CostBreakdown costData={result.costData} />
+            </div>
+          </div>
+
+          <div className="border rounded-lg bg-card overflow-hidden">
+            <div 
+              className="flex justify-between items-center p-4 cursor-pointer"
+              onClick={() => {}}
+            >
+              <h3 className="font-medium text-lg flex items-center">
+                <BarChart size={18} className="mr-2" />
+                Optimization Recommendations
+              </h3>
+              <ChevronUp size={18} className="text-muted-foreground" />
+            </div>
+            
+            <div className="p-4 pt-0">
+              <div className="space-y-4">
+                <div className="border-l-4 border-info p-4 bg-info/5 rounded-r-md">
+                  <h4 className="font-medium mb-1">Resource Balancing</h4>
+                  <p className="text-sm">Frontend development resources appear to be overutilized in Sprints 1 and 7. Consider redistributing tasks to balance workload across the team.</p>
+                </div>
+                
+                <div className="border-l-4 border-success p-4 bg-success/5 rounded-r-md">
+                  <h4 className="font-medium mb-1">Cost Efficiency</h4>
+                  <p className="text-sm">Backend development is slightly over budget. Look for opportunities to optimize implementation approach for remaining features.</p>
+                </div>
+                
+                <div className="border-l-4 border-warning p-4 bg-warning/5 rounded-r-md">
+                  <h4 className="font-medium mb-1">Risk Mitigation</h4>
+                  <p className="text-sm">Consider adding a buffer sprint to account for the identified technical risks, especially around external dependencies.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <ResultsAnalysisDashboard />
+      )}
     </div>
   );
 };
+
+// Import components from existing files
+import UtilizationChart from "../components/UtilizationChart";
+import CostBreakdown from "../components/CostBreakdown";
 
 export default ResultsAnalyzer;
