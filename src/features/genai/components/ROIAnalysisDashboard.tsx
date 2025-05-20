@@ -35,6 +35,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
   const [confidenceLevel, setConfidenceLevel] = useState<number>(80);
   const [roiAnalysis, setRoiAnalysis] = useState<ROIAnalysis | null>(null);
   const [timeHorizon, setTimeHorizon] = useState<number>(24);
+  const [roiChartData, setRoiChartData] = useState<any[]>([]);
   
   // Cost breakdown
   const [licensingCost, setLicensingCost] = useState<number>(0);
@@ -56,9 +57,16 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
     
   }, [accelerator]);
 
+  // Update total cost when cost breakdown changes - this was causing infinite loop
+  useEffect(() => {
+    const totalCost = licensingCost + setupCost + integrationCost + maintenanceCost;
+    setEditedCost(totalCost);
+  }, [licensingCost, setupCost, integrationCost, maintenanceCost]);
+
   useEffect(() => {
     // Recalculate ROI whenever inputs change
-    calculateROI();
+    const data = calculateROI();
+    setRoiChartData(data);
   }, [
     accelerator, 
     editedCost, 
@@ -68,12 +76,6 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
     confidenceLevel,
     timeHorizon
   ]);
-
-  // Update total cost when cost breakdown changes
-  useEffect(() => {
-    const totalCost = licensingCost + setupCost + integrationCost + maintenanceCost;
-    setEditedCost(totalCost);
-  }, [licensingCost, setupCost, integrationCost, maintenanceCost]);
 
   const calculateROI = () => {
     // Sort adoption curve by timePoint
@@ -165,8 +167,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
     return sprintData;
   };
 
-  // Generate chart data
-  const roiChartData = calculateROI();
+  // Get breakeven point from roiAnalysis
   const breakEvenPoint = roiAnalysis?.breakEvenSprint || 0;
   
   // Create cost breakdown data for the pie chart
@@ -215,6 +216,27 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
         dark: "#82ca9d10"
       }
     }
+  };
+
+  // Handle cost input changes without causing infinite updates
+  const handleLicensingCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLicensingCost(Number(e.target.value));
+  };
+
+  const handleSetupCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSetupCost(Number(e.target.value));
+  };
+
+  const handleIntegrationCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIntegrationCost(Number(e.target.value));
+  };
+
+  const handleMaintenanceCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMaintenanceCost(Number(e.target.value));
+  };
+
+  const handleTrainingOverheadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedTrainingOverhead(Number(e.target.value));
   };
 
   return (
@@ -300,12 +322,14 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                       dot={false}
                       strokeWidth={2}
                     />
-                    <ReferenceLine 
-                      x={roiAnalysis?.breakEvenSprint} 
-                      stroke="var(--color-cost)" 
-                      strokeDasharray="3 3"
-                      label={{ value: 'Payback', position: 'right', fill: 'var(--color-cost)' }}
-                    />
+                    {roiAnalysis?.breakEvenSprint && (
+                      <ReferenceLine 
+                        x={roiAnalysis.breakEvenSprint} 
+                        stroke="var(--color-cost)" 
+                        strokeDasharray="3 3"
+                        label={{ value: 'Payback', position: 'right', fill: 'var(--color-cost)' }}
+                      />
+                    )}
                     <ReferenceLine 
                       y={0} 
                       stroke="#666" 
@@ -372,7 +396,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                       type="number"
                       min="0"
                       value={licensingCost}
-                      onChange={(e) => setLicensingCost(Number(e.target.value))}
+                      onChange={handleLicensingCostChange}
                       className="rounded-l-none"
                     />
                   </div>
@@ -385,7 +409,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                       type="number"
                       min="0"
                       value={setupCost}
-                      onChange={(e) => setSetupCost(Number(e.target.value))}
+                      onChange={handleSetupCostChange}
                       className="rounded-l-none"
                     />
                   </div>
@@ -401,7 +425,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                       type="number"
                       min="0"
                       value={integrationCost}
-                      onChange={(e) => setIntegrationCost(Number(e.target.value))}
+                      onChange={handleIntegrationCostChange}
                       className="rounded-l-none"
                     />
                   </div>
@@ -414,7 +438,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                       type="number"
                       min="0"
                       value={maintenanceCost}
-                      onChange={(e) => setMaintenanceCost(Number(e.target.value))}
+                      onChange={handleMaintenanceCostChange}
                       className="rounded-l-none"
                     />
                   </div>
@@ -429,7 +453,7 @@ const ROIAnalysisDashboard: React.FC<ROIAnalysisDashboardProps> = ({ accelerator
                     type="number"
                     min="0"
                     value={editedTrainingOverhead}
-                    onChange={(e) => setEditedTrainingOverhead(Number(e.target.value))}
+                    onChange={handleTrainingOverheadChange}
                     className="rounded-l-none"
                   />
                 </div>
