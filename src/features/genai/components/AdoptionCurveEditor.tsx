@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   LineChart,
@@ -210,8 +209,7 @@ const AdoptionCurveEditor: React.FC<AdoptionCurveEditorProps> = ({ accelerator, 
                     />
                     <Tooltip
                       content={<ChartTooltipContent />}
-                      labelKey="sprint"
-                      formatter={(value) => [`${value}%`, 'Effectiveness']}
+                      formatter={(value: any) => [`${value}%`, 'Effectiveness']}
                     />
                     <Area
                       type="monotone"
