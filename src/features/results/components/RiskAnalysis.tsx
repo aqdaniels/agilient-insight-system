@@ -1,95 +1,84 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/design-system";
+import React from 'react';
 import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
-import { RiskFactor } from "../../simulation/types";
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  ZAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell,
-  BarChart,
-  Bar,
-  ReferenceLine
-} from "recharts";
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+  ScatterChart, Scatter, ZAxis, ReferenceLine
+} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/design-system';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertTriangle } from 'lucide-react';
 
-interface RiskAnalysisProps {
-  riskFactors: RiskFactor[];
-}
+// Sample risk data
+const riskData = [
+  { name: 'Scope Creep', probability: 0.7, impact: 0.8, risk: 0.56, category: 'Project Management' },
+  { name: 'Resource Unavailability', probability: 0.5, impact: 0.9, risk: 0.45, category: 'Resource' },
+  { name: 'Technical Debt', probability: 0.8, impact: 0.6, risk: 0.48, category: 'Technical' },
+  { name: 'Integration Issues', probability: 0.6, impact: 0.7, risk: 0.42, category: 'Technical' },
+  { name: 'Requirements Ambiguity', probability: 0.7, impact: 0.7, risk: 0.49, category: 'Functional' },
+  { name: 'Performance Issues', probability: 0.4, impact: 0.8, risk: 0.32, category: 'Technical' },
+  { name: 'Security Vulnerabilities', probability: 0.3, impact: 1.0, risk: 0.30, category: 'Security' },
+  { name: 'Budget Overrun', probability: 0.6, impact: 0.9, risk: 0.54, category: 'Financial' },
+  { name: 'Schedule Delay', probability: 0.8, impact: 0.8, risk: 0.64, category: 'Project Management' },
+  { name: 'Vendor Dependency', probability: 0.5, impact: 0.6, risk: 0.30, category: 'External' },
+];
 
-// Sample data for dependency network - in a real app this would come from the API
+// Dependencies data
 const dependencyData = [
-  { id: 'risk-001', source: 'Authentication Component', target: 'User Profile', type: 'implementation', severity: 'medium' },
-  { id: 'risk-002', source: 'Database Schema', target: 'API Layer', type: 'technical', severity: 'high' },
-  { id: 'risk-003', source: 'Payment Gateway', target: 'Order Processing', type: 'external', severity: 'high' },
-  { id: 'risk-004', source: 'Asset Pipeline', target: 'Frontend Build', type: 'technical', severity: 'low' },
-  { id: 'risk-005', source: 'API Layer', target: 'Mobile Client', type: 'implementation', severity: 'medium' }
+  { id: 1, source: 'Integration API', target: 'Backend Services', weight: 3, type: 'technical' },
+  { id: 2, source: 'UX Design', target: 'Frontend Development', weight: 5, type: 'workflow' },
+  { id: 3, source: 'Data Model', target: 'API Design', weight: 4, type: 'technical' },
+  { id: 4, source: 'Authentication Service', target: 'User Management', weight: 3, type: 'technical' },
+  { id: 5, source: 'Backend Services', target: 'Frontend Development', weight: 4, type: 'workflow' },
+  { id: 6, source: 'DevOps Pipeline', target: 'Testing', weight: 2, type: 'workflow' },
+  { id: 7, source: 'External API', target: 'Integration API', weight: 5, type: 'external' },
+  { id: 8, source: 'Database', target: 'Backend Services', weight: 5, type: 'technical' },
 ];
 
-// Sample data for impact analysis
-const bottleneckImpactData = [
-  { name: 'Database Schema Migration', impact: 9, delay: 3, cost: 12000 },
-  { name: 'Auth System Integration', impact: 7, delay: 4, cost: 8000 },
-  { name: 'Payment Gateway API', impact: 5, delay: 2, cost: 5000 },
-  { name: 'CI/CD Pipeline Setup', impact: 3, delay: 1, cost: 3000 },
-  { name: 'Load Testing Infrastructure', impact: 6, delay: 2, cost: 7000 },
+// Bottleneck data
+const bottleneckData = [
+  { name: 'API Integration', value: 85, limit: 60 },
+  { name: 'Database Queries', value: 45, limit: 70 },
+  { name: 'UI Rendering', value: 30, limit: 40 },
+  { name: 'Authentication', value: 65, limit: 50 },
+  { name: 'File Processing', value: 90, limit: 75 },
 ];
 
-// Sample data for sensitivity analysis
+// Sensitivity analysis data
 const sensitivityData = [
-  { name: 'Team Size', elasticity: 0.8, impact: 8 },
-  { name: 'Sprint Length', elasticity: 0.3, impact: 3 },
-  { name: 'Technical Complexity', elasticity: 0.7, impact: 7 },
-  { name: 'External Dependencies', elasticity: 0.9, impact: 9 },
-  { name: 'Requirements Stability', elasticity: 0.6, impact: 6 },
+  { parameter: 'Team Size', change: -20, impact: -15 },
+  { parameter: 'Team Size', change: -10, impact: -7 },
+  { parameter: 'Team Size', change: 10, impact: 5 },
+  { parameter: 'Team Size', change: 20, impact: 8 },
+  { parameter: 'Sprint Length', change: -20, impact: 12 },
+  { parameter: 'Sprint Length', change: -10, impact: 5 },
+  { parameter: 'Sprint Length', change: 10, impact: -4 },
+  { parameter: 'Sprint Length', change: 20, impact: -10 },
+  { parameter: 'Technical Debt', change: -20, impact: 18 },
+  { parameter: 'Technical Debt', change: -10, impact: 8 },
+  { parameter: 'Technical Debt', change: 10, impact: -9 },
+  { parameter: 'Technical Debt', change: 20, impact: -20 },
 ];
 
-const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
-  const [activeTab, setActiveTab] = useState("matrix");
-  
-  // Transform risk factors for scatter plot
-  const riskMatrixData = riskFactors.map(risk => ({
-    name: risk.name,
-    x: risk.probability, // x-axis: probability
-    y: risk.impact, // y-axis: impact
-    z: 10, // bubble size
-    score: risk.probability * risk.impact
-  }));
-  
-  const getRiskColor = (score: number) => {
-    if (score >= 0.6) return "#ef4444"; // High risk - red
-    if (score >= 0.3) return "#f59e0b"; // Medium risk - amber
-    return "#10b981"; // Low risk - green
-  };
-
+const RiskAnalysis: React.FC = () => {
   return (
     <div className="space-y-6">
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
-          <TabsTrigger value="matrix">Risk Matrix</TabsTrigger>
-          <TabsTrigger value="dependencies">Dependencies</TabsTrigger>
-          <TabsTrigger value="bottlenecks">Bottleneck Impact</TabsTrigger>
+      <Tabs defaultValue="risk-matrix" className="w-full">
+        <TabsList className="grid grid-cols-5 w-full">
+          <TabsTrigger value="risk-matrix">Risk Matrix</TabsTrigger>
+          <TabsTrigger value="risk-register">Risk Register</TabsTrigger>
+          <TabsTrigger value="dependency-network">Dependencies</TabsTrigger>
+          <TabsTrigger value="bottlenecks">Bottlenecks</TabsTrigger>
           <TabsTrigger value="sensitivity">Sensitivity Analysis</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="matrix" className="pt-4">
+        <TabsContent value="risk-matrix" className="mt-6">
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-medium">Risk Categorization Matrix</CardTitle>
+            <CardHeader>
+              <CardTitle>Risk Matrix</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-80">
+              <div className="h-[500px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart
                     margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
@@ -97,107 +86,127 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                     <CartesianGrid />
                     <XAxis 
                       type="number" 
-                      dataKey="x" 
-                      name="probability" 
+                      dataKey="impact" 
+                      name="Impact" 
                       domain={[0, 1]} 
-                      label={{ value: 'Probability', position: 'bottom' }}
-                      tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                      label={{ value: 'Impact', position: 'bottom' }} 
                     />
                     <YAxis 
                       type="number" 
-                      dataKey="y" 
-                      name="impact" 
+                      dataKey="probability" 
+                      name="Probability" 
                       domain={[0, 1]} 
-                      label={{ value: 'Impact', angle: -90, position: 'left' }}
-                      tickFormatter={(value) => `${Math.round(value * 100)}%`}
+                      label={{ value: 'Probability', angle: -90, position: 'left' }} 
                     />
-                    <ZAxis 
-                      type="number" 
-                      dataKey="z" 
-                      range={[50, 400]} 
-                      name="score" 
-                      unit="points" 
-                    />
+                    <ZAxis type="number" dataKey="risk" range={[50, 400]} />
                     <Tooltip 
+                      formatter={(value: any) => value.toFixed(2)}
                       cursor={{ strokeDasharray: '3 3' }}
-                      formatter={(value, name, props) => {
-                        if (name === 'probability' || name === 'impact') {
-                          return [`${Math.round(Number(value) * 100)}%`, name];
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-background p-3 border rounded shadow-sm">
+                              <p className="font-medium">{data.name}</p>
+                              <p className="text-sm">Category: {data.category}</p>
+                              <p className="text-sm">Probability: {data.probability.toFixed(2)}</p>
+                              <p className="text-sm">Impact: {data.impact.toFixed(2)}</p>
+                              <p className="text-sm font-medium">Risk Score: {data.risk.toFixed(2)}</p>
+                            </div>
+                          );
                         }
-                        return [value, name];
+                        return null;
                       }}
                     />
-                    <ReferenceLine x={0.5} stroke="#666" strokeDasharray="3 3" />
-                    <ReferenceLine y={0.5} stroke="#666" strokeDasharray="3 3" />
-                    <Scatter name="Risks" data={riskMatrixData} shape="circle">
-                      {riskMatrixData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={getRiskColor(entry.score)} />
-                      ))}
-                    </Scatter>
+                    <ReferenceLine y={0.5} stroke="#777" strokeDasharray="3 3" />
+                    <ReferenceLine x={0.5} stroke="#777" strokeDasharray="3 3" />
+                    <Scatter 
+                      name="Risks" 
+                      data={riskData} 
+                      fill="#8884d8"
+                      shape={(props) => {
+                        const { cx, cy, payload } = props;
+                        return (
+                          <circle 
+                            cx={cx} 
+                            cy={cy} 
+                            r={10} 
+                            fill={
+                              payload.risk >= 0.5 ? "#ef4444" : 
+                              payload.risk >= 0.3 ? "#f97316" : 
+                              "#22c55e"
+                            }
+                            opacity={0.8}
+                          />
+                        );
+                      }}
+                    />
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-error"></span>
-                  <span>High Risk (P*I ≥ 0.6)</span>
+                  <div className="w-4 h-4 rounded-full bg-red-500"></div>
+                  <span>High Risk (≥ 0.5)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-warning"></span>
-                  <span>Medium Risk (0.3 ≤ P*I < 0.6)</span>
+                  <div className="w-4 h-4 rounded-full bg-orange-500"></div>
+                  <span>Medium Risk (0.3-0.5)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-success"></span>
-                  <span>Low Risk (P*I < 0.3)</span>
+                  <div className="w-4 h-4 rounded-full bg-green-500"></div>
+                  <span>Low Risk (< 0.3)</span>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
-          <div className="mt-6">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-medium">Risk Register</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <table className="w-full text-sm">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="py-2 px-3 text-left">Risk Factor</th>
-                      <th className="py-2 px-3 text-left">Probability</th>
-                      <th className="py-2 px-3 text-left">Impact</th>
-                      <th className="py-2 px-3 text-left">Risk Score</th>
-                      <th className="py-2 px-3 text-left">Mitigation Strategy</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {riskFactors.map((risk, index) => (
-                      <tr key={index} className="border-b border-muted">
-                        <td className="py-2 px-3">{risk.name}</td>
-                        <td className="py-2 px-3">{Math.round(risk.probability * 100)}%</td>
-                        <td className="py-2 px-3">{Math.round(risk.impact * 100)}%</td>
-                        <td className="py-2 px-3">
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="h-2 w-2 rounded-full"
-                              style={{ backgroundColor: getRiskColor(risk.probability * risk.impact) }}
-                            ></div>
-                            {Math.round(risk.probability * risk.impact * 100)}%
-                          </div>
-                        </td>
-                        <td className="py-2 px-3">
-                          <Button variant="ghost" size="sm">View Strategy</Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
         
-        <TabsContent value="dependencies" className="pt-4">
+        {/* Risk Register Tab */}
+        <TabsContent value="risk-register" className="mt-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium">Risk Register</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <table className="w-full text-sm">
+                <thead className="bg-muted">
+                  <tr>
+                    <th className="py-2 px-3 text-left">Risk Factor</th>
+                    <th className="py-2 px-3 text-left">Probability</th>
+                    <th className="py-2 px-3 text-left">Impact</th>
+                    <th className="py-2 px-3 text-left">Risk Score</th>
+                    <th className="py-2 px-3 text-left">Mitigation Strategy</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {riskData.map((risk, index) => (
+                    <tr key={index} className="border-b border-muted">
+                      <td className="py-2 px-3">{risk.name}</td>
+                      <td className="py-2 px-3">{Math.round(risk.probability * 100)}%</td>
+                      <td className="py-2 px-3">{Math.round(risk.impact * 100)}%</td>
+                      <td className="py-2 px-3">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="h-2 w-2 rounded-full"
+                            style={{ backgroundColor: getRiskColor(risk.probability * risk.impact) }}
+                          ></div>
+                          {Math.round(risk.probability * risk.impact * 100)}%
+                        </div>
+                      </td>
+                      <td className="py-2 px-3">
+                        <Button variant="ghost" size="sm">View Strategy</Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Dependencies Tab */}
+        <TabsContent value="dependency-network" className="mt-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Dependency Network</CardTitle>
@@ -246,7 +255,8 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="bottlenecks" className="pt-4">
+        {/* Bottlenecks Tab */}
+        <TabsContent value="bottlenecks" className="mt-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Bottleneck Impact Quantification</CardTitle>
@@ -257,7 +267,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        data={bottleneckImpactData}
+                        data={bottleneckData}
                         layout="vertical"
                         margin={{
                           top: 5,
@@ -274,7 +284,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                         />
                         <Legend />
                         <Bar 
-                          dataKey="delay" 
+                          dataKey="value" 
                           name="Schedule Impact (Days)" 
                           fill="#ef4444"
                         />
@@ -286,7 +296,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
-                        data={bottleneckImpactData}
+                        data={bottleneckData}
                         layout="vertical"
                         margin={{
                           top: 5,
@@ -303,7 +313,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                         />
                         <Legend />
                         <Bar 
-                          dataKey="cost" 
+                          dataKey="limit" 
                           name="Cost Impact ($)" 
                           fill="#3b82f6"
                         />
@@ -336,7 +346,8 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="sensitivity" className="pt-4">
+        {/* Sensitivity Analysis Tab */}
+        <TabsContent value="sensitivity" className="mt-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium">Critical Path Sensitivity Analysis</CardTitle>
@@ -349,13 +360,13 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                     layout="horizontal"
                   >
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
+                    <XAxis dataKey="parameter" />
                     <YAxis tickFormatter={(value) => value.toFixed(1)} domain={[0, 1]} />
                     <Tooltip />
                     <Legend />
                     <Bar 
-                      dataKey="elasticity" 
-                      name="Schedule Elasticity" 
+                      dataKey="impact" 
+                      name="Schedule Impact" 
                       fill="#3b82f6"
                     />
                   </BarChart>
@@ -365,7 +376,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                 <h3 className="font-medium mb-3">Sensitivity Analysis Insights</h3>
                 <div className="text-sm space-y-2">
                   <p>
-                    <strong>Schedule Elasticity:</strong> Measures how sensitive the project timeline is to changes in each variable.
+                    <strong>Schedule Impact:</strong> Measures how sensitive the project timeline is to changes in each variable.
                     Higher values indicate that small changes in this factor have larger effects on the schedule.
                   </p>
                   <ul className="list-disc ml-5 space-y-1">
