@@ -28,18 +28,18 @@ const SimulationControls: React.FC<SimulationControlsProps> = ({
     // Handle nested properties
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
-      setParams({
-        ...params,
+      setParams(prevParams => ({
+        ...prevParams,
         [parent]: {
-          ...params[parent as keyof SimulationParameters],
+          ...prevParams[parent as keyof SimulationParameters],
           [child]: newValue
         }
-      });
+      }));
     } else {
-      setParams({
-        ...params,
+      setParams(prevParams => ({
+        ...prevParams,
         [name]: newValue
-      });
+      }));
     }
   };
 

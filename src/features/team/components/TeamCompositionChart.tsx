@@ -86,7 +86,10 @@ const TeamCompositionChart: React.FC<TeamCompositionChartProps> = ({ members }) 
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => [`Level: ${value.toFixed(0)}/100`, 'Avg. Proficiency']} />
+              <Tooltip formatter={(value) => {
+                const numValue = typeof value === 'number' ? value.toFixed(0) : value;
+                return [`Level: ${numValue}/100`, 'Avg. Proficiency'];
+              }} />
               <Legend />
             </PieChart>
           </ResponsiveContainer>

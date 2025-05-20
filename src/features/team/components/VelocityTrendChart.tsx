@@ -1,4 +1,3 @@
-
 import React from "react";
 import { TeamVelocity } from "../containers/TeamConfigurator";
 import {
@@ -52,6 +51,11 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
     });
   }
 
+  // Function to determine stroke dasharray based on data
+  const getStrokeDashArray = (dataPoint: TeamVelocity) => {
+    return dataPoint.date === "Projected" ? "5 5" : "0";
+  };
+
   return (
     <div className="space-y-4">
       <div className="h-64">
@@ -85,7 +89,8 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#82ca9d"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={(i, data) => data.date === "Projected" ? "5 5" : "0"}
+              strokeDasharray={getStrokeDashArray(predictedData[0])}
+              connectNulls
             />
           </LineChart>
         </ResponsiveContainer>
