@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/design-system";
@@ -21,7 +20,8 @@ import {
   ResponsiveContainer,
   Cell,
   BarChart,
-  Bar
+  Bar,
+  ReferenceLine
 } from "recharts";
 
 interface RiskAnalysisProps {
@@ -127,6 +127,8 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                         return [value, name];
                       }}
                     />
+                    <ReferenceLine x={0.5} stroke="#666" strokeDasharray="3 3" />
+                    <ReferenceLine y={0.5} stroke="#666" strokeDasharray="3 3" />
                     <Scatter name="Risks" data={riskMatrixData} shape="circle">
                       {riskMatrixData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={getRiskColor(entry.score)} />
