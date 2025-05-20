@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart, 
@@ -66,10 +67,10 @@ const ResourceUtilization: React.FC = () => {
       <div className="flex flex-wrap gap-4 mb-4">
         <div className="w-48">
           <Select value={timeframeFilter} onValueChange={setTimeframeFilter}>
-            <SelectTrigger>
+            <SelectTrigger className="transition-all duration-200 hover:border-primary focus:border-primary">
               <SelectValue placeholder="Select timeframe" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="animate-in fade-in-50 zoom-in-95 duration-200">
               <SelectItem value="all">All Sprints</SelectItem>
               <SelectItem value="early">Early Sprints (1-3)</SelectItem>
               <SelectItem value="middle">Middle Sprints (4-6)</SelectItem>
@@ -80,10 +81,10 @@ const ResourceUtilization: React.FC = () => {
         
         <div className="w-48">
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger>
+            <SelectTrigger className="transition-all duration-200 hover:border-primary focus:border-primary">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="animate-in fade-in-50 zoom-in-95 duration-200">
               <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="frontend">Frontend</SelectItem>
               <SelectItem value="backend">Backend</SelectItem>
@@ -96,7 +97,7 @@ const ResourceUtilization: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Team Capacity Utilization</CardTitle>
           </CardHeader>
@@ -139,21 +140,22 @@ const ResourceUtilization: React.FC = () => {
                   />
                   <ChartTooltip 
                     content={<ChartTooltipContent />}
+                    animationDuration={200}
                   />
                   <Legend />
-                  <Bar dataKey="frontend" />
-                  <Bar dataKey="backend" />
-                  <Bar dataKey="design" />
-                  <Bar dataKey="qa" />
-                  <Bar dataKey="devops" />
-                  <Bar dataKey="management" />
+                  <Bar dataKey="frontend" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="backend" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="design" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="qa" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="devops" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="management" className="transition-opacity duration-200 hover:opacity-80" />
                 </BarChart>
               </ChartContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Skill Utilization & Demand</CardTitle>
           </CardHeader>
@@ -186,11 +188,12 @@ const ResourceUtilization: React.FC = () => {
                     dataKey="name"
                   />
                   <ChartTooltip 
-                    content={<ChartTooltipContent />} 
+                    content={<ChartTooltipContent />}
+                    animationDuration={200}
                   />
                   <Legend />
-                  <Bar dataKey="utilization" />
-                  <Bar dataKey="demand" />
+                  <Bar dataKey="utilization" className="transition-opacity duration-200 hover:opacity-80" />
+                  <Bar dataKey="demand" className="transition-opacity duration-200 hover:opacity-80" />
                 </BarChart>
               </ChartContainer>
             </div>
@@ -199,7 +202,7 @@ const ResourceUtilization: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-1 gap-6">
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Bottleneck Identification</CardTitle>
           </CardHeader>
@@ -243,18 +246,24 @@ const ResourceUtilization: React.FC = () => {
                   <ChartTooltip
                     cursor={{ strokeDasharray: '3 3' }}
                     content={<ChartTooltipContent />}
+                    animationDuration={200}
                   />
                   <Scatter 
                     name="Bottlenecks" 
-                    data={bottleneckData} 
+                    data={bottleneckData}
                     fill="#ef4444"
+                    className="transition-opacity duration-200 hover:opacity-80"
                   >
                     {bottleneckData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={
-                        entry.severity * entry.impact > 60 ? "#ef4444" :
-                        entry.severity * entry.impact > 40 ? "#f59e0b" :
-                        "#10b981"
-                      } />
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={
+                          entry.severity * entry.impact > 60 ? "#ef4444" :
+                          entry.severity * entry.impact > 40 ? "#f59e0b" :
+                          "#10b981"
+                        }
+                        className="transition-all duration-200 hover:opacity-80"
+                      />
                     ))}
                   </Scatter>
                 </ScatterChart>
@@ -263,23 +272,23 @@ const ResourceUtilization: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium">Allocation Optimization Suggestions</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="border-l-4 border-info p-4 bg-info/5 rounded-r-md">
+              <div className="border-l-4 border-info p-4 bg-info/5 rounded-r-md transition-all duration-200 hover:bg-info/10 hover:translate-x-1">
                 <h4 className="font-medium mb-1">Rebalance QA Resources</h4>
                 <p className="text-sm">QA resources are underutilized in Sprint 1-2 but overutilized in Sprint 5-6. Consider shifting testing activities earlier to smooth resource needs.</p>
               </div>
               
-              <div className="border-l-4 border-warning p-4 bg-warning/5 rounded-r-md">
+              <div className="border-l-4 border-warning p-4 bg-warning/5 rounded-r-md transition-all duration-200 hover:bg-warning/10 hover:translate-x-1">
                 <h4 className="font-medium mb-1">Backend Developer Skills Gap</h4>
                 <p className="text-sm">Current backend team lacks sufficient API design expertise. Consider training or short-term consulting to bridge the knowledge gap.</p>
               </div>
               
-              <div className="border-l-4 border-success p-4 bg-success/5 rounded-r-md">
+              <div className="border-l-4 border-success p-4 bg-success/5 rounded-r-md transition-all duration-200 hover:bg-success/10 hover:translate-x-1">
                 <h4 className="font-medium mb-1">Cross-training Opportunity</h4>
                 <p className="text-sm">Database specialists are underutilized in Sprint 7-8. Consider cross-training on DevOps to support CI/CD pipeline implementation.</p>
               </div>

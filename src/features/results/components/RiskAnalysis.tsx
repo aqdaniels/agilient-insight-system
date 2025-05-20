@@ -73,7 +73,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card>
+        <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-lg flex items-center">
               <AlertTriangle size={18} className="mr-2 text-warning" />
@@ -83,28 +83,28 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center transition-all duration-200 hover:bg-muted/20 p-2 rounded-md">
                 <span className="text-sm font-medium">Total Risks</span>
-                <Badge variant="outline">{riskFactors.length}</Badge>
+                <Badge variant="outline" className="animate-in fade-in-50 duration-300">{riskFactors.length}</Badge>
               </div>
               
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center transition-all duration-200 hover:bg-muted/20 p-2 rounded-md">
                 <span className="text-sm font-medium">High Risk Items</span>
-                <Badge variant="error">
+                <Badge variant="error" className="animate-in fade-in-50 duration-300">
                   {riskFactors.filter(r => getRiskLevel(calculateRiskScore(r.impact, r.probability)) === "high").length}
                 </Badge>
               </div>
               
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center transition-all duration-200 hover:bg-muted/20 p-2 rounded-md">
                 <span className="text-sm font-medium">Medium Risk Items</span>
-                <Badge variant="warning">
+                <Badge variant="warning" className="animate-in fade-in-50 duration-300">
                   {riskFactors.filter(r => getRiskLevel(calculateRiskScore(r.impact, r.probability)) === "medium").length}
                 </Badge>
               </div>
               
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center transition-all duration-200 hover:bg-muted/20 p-2 rounded-md">
                 <span className="text-sm font-medium">Low Risk Items</span>
-                <Badge variant="success">
+                <Badge variant="success" className="animate-in fade-in-50 duration-300">
                   {riskFactors.filter(r => getRiskLevel(calculateRiskScore(r.impact, r.probability)) === "low").length}
                 </Badge>
               </div>
@@ -112,7 +112,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
           </CardContent>
         </Card>
         
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 transition-all duration-200 hover:shadow-md">
           <CardHeader>
             <CardTitle className="text-lg">Risk Distribution</CardTitle>
             <CardDescription>Risk score by factor</CardDescription>
@@ -120,7 +120,9 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
           <CardContent>
             <div className="h-[180px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
+                  className="transition-all duration-300 ease-out"
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis 
                     dataKey="name" 
@@ -144,12 +146,19 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                       );
                       return risk ? risk.name : label;
                     }}
+                    animationDuration={200}
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                    }}
                   />
-                  <Bar dataKey="score" fill="#8884d8">
+                  <Bar dataKey="score" fill="#8884d8" className="transition-opacity duration-200 hover:opacity-90">
                     {chartData.map((entry, index) => (
                       <Cell 
                         key={`cell-${index}`} 
                         fill={getRiskColor(Number(entry.score))}
+                        className="transition-all duration-300 hover:filter hover:brightness-110"
                       />
                     ))}
                   </Bar>
@@ -160,52 +169,55 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
         </Card>
       </div>
       
-      <Card>
+      <Card className="transition-all duration-200 hover:shadow-md">
         <CardHeader>
           <CardTitle className="text-lg">Risk Factor Details</CardTitle>
           <CardDescription>Comprehensive breakdown of identified risks</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Risk Factor</TableHead>
-                <TableHead>Impact</TableHead>
-                <TableHead>Probability</TableHead>
-                <TableHead>Risk Score</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Trend</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedRisks.map((risk, index) => {
-                const score = calculateRiskScore(risk.impact, risk.probability);
-                const level = getRiskLevel(score);
-                
-                return (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{risk.name}</TableCell>
-                    <TableCell>{(risk.impact * 10).toFixed(1)} / 10</TableCell>
-                    <TableCell>{Math.round(risk.probability * 100)}%</TableCell>
-                    <TableCell>{score.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={level === "high" ? "error" : level === "medium" ? "warning" : "success"}
-                      >
-                        {level.charAt(0).toUpperCase() + level.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {index % 2 === 0 ? 
-                        <TrendingUp size={18} className="text-success" /> : 
-                        <TrendingDown size={18} className="text-destructive" />
-                      }
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+          <div className="rounded-md border overflow-hidden">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead>Risk Factor</TableHead>
+                  <TableHead>Impact</TableHead>
+                  <TableHead>Probability</TableHead>
+                  <TableHead>Risk Score</TableHead>
+                  <TableHead>Level</TableHead>
+                  <TableHead>Trend</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortedRisks.map((risk, index) => {
+                  const score = calculateRiskScore(risk.impact, risk.probability);
+                  const level = getRiskLevel(score);
+                  
+                  return (
+                    <TableRow key={index} className="transition-all duration-200 hover:bg-muted/10 group">
+                      <TableCell className="font-medium group-hover:translate-x-1 transition-transform duration-200">{risk.name}</TableCell>
+                      <TableCell className="transition-all duration-200 group-hover:font-medium">{(risk.impact * 10).toFixed(1)} / 10</TableCell>
+                      <TableCell className="transition-all duration-200 group-hover:font-medium">{Math.round(risk.probability * 100)}%</TableCell>
+                      <TableCell className="transition-all duration-200 group-hover:font-medium">{score.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={level === "high" ? "error" : level === "medium" ? "warning" : "success"}
+                          className="transition-all duration-300 group-hover:scale-105"
+                        >
+                          {level.charAt(0).toUpperCase() + level.slice(1)}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {index % 2 === 0 ? 
+                          <TrendingUp size={18} className="text-success transition-all duration-200 group-hover:scale-110" /> : 
+                          <TrendingDown size={18} className="text-destructive transition-all duration-200 group-hover:scale-110" />
+                        }
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
