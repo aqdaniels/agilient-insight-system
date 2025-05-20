@@ -73,7 +73,7 @@ const fetchScenarios = async (): Promise<ScenarioSummary[]> => {
 };
 
 const ComparisonWorkspace: React.FC = () => {
-  const { data: scenarios, isLoading, error } = useQuery({
+  const { data: scenarios = [], isLoading, error } = useQuery({
     queryKey: ['scenarios'],
     queryFn: fetchScenarios,
   });
@@ -93,7 +93,7 @@ const ComparisonWorkspace: React.FC = () => {
   const filteredScenarios = scenarios?.filter(scenario =>
     scenario.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     scenario.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  ) || [];
   
   // Get selected scenarios for comparison
   const selectedScenarios = scenarios?.filter(scenario => 
@@ -136,7 +136,7 @@ const ComparisonWorkspace: React.FC = () => {
       <div className="border rounded-lg p-4 bg-card">
         <h3 className="font-medium text-lg mb-4">Select Scenarios to Compare</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {filteredScenarios?.map((scenario) => {
+          {filteredScenarios.map((scenario) => {
             const isSelected = selectedScenarioIds.includes(scenario.id);
             
             return (
