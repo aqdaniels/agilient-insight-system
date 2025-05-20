@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/design-system";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -509,8 +508,9 @@ const CortexVisualizationConfig: React.FC = () => {
               <p className="mt-2">Visualization integration health metrics will appear here</p>
               <p className="text-sm text-muted-foreground">Tracking load times, refresh rates, and rendering performance</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
