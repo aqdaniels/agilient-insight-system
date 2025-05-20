@@ -3,24 +3,41 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/design-system";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/design-system";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Save, Users, BarChart2, Gauge, Calendar, Lightbulb } from "lucide-react";
+import { toast } from "sonner";
+
+import TeamCompositionEditor from "../components/TeamCompositionEditor";
 import TeamCompositionChart from "../components/TeamCompositionChart";
 import VelocityTrendChart from "../components/VelocityTrendChart";
-import { Plus, Save } from "lucide-react";
+import TeamOptimizationView from "../components/TeamOptimizationView";
+import WorkingPatternConfig from "../components/WorkingPatternConfig";
+import VelocityDataTable from "../components/VelocityDataTable";
 
 // Types
+export interface Skill {
+  name: string;
+  level: number;
+}
+
 export interface TeamMember {
   id: string;
   name: string;
   role: string;
-  skills: { name: string; level: number }[];
+  skills: Skill[];
   costRate: number;
   availability: number; // percentage of time available
+  aiAdoptionLevel: number; // 0-100 scale
+  workingDays: boolean[]; // array of 5 booleans, one for each day of the work week
 }
 
-export interface TeamVelocity {
-  sprint: string;
+export interface VelocityData {
+  sprintId: string;
+  sprintName: string;
   plannedPoints: number;
   completedPoints: number;
+  completionRate: number;
   date: string;
 }
 
@@ -28,7 +45,12 @@ export interface TeamConfiguration {
   id: string;
   name: string;
   members: TeamMember[];
-  velocityHistory: TeamVelocity[];
+  velocityHistory: VelocityData[];
+  averageVelocity: number;
+  capacityPerSprint: number;
+  workingDaysPerSprint: number;
+  sprintLength: number; // in weeks
+  ceremonyOverhead: number; // in hours per sprint
 }
 
 // Mock API call
@@ -45,58 +67,71 @@ const fetchTeamConfiguration = async (): Promise<TeamConfiguration> => {
         name: "Alex Morgan",
         role: "Senior Developer",
         skills: [
-          { name: "Frontend", level: 90 },
-          { name: "Backend", level: 75 },
-          { name: "DevOps", level: 60 }
+          { name: "Frontend", level: 4 },
+          { name: "Backend", level: 3 },
+          { name: "DevOps", level: 3 }
         ],
         costRate: 120,
-        availability: 100
+        availability: 100,
+        aiAdoptionLevel: 75,
+        workingDays: [true, true, true, true, true]
       },
       {
         id: "tm-002",
         name: "Jamie Taylor",
         role: "UX Designer",
         skills: [
-          { name: "UI Design", level: 95 },
-          { name: "Research", level: 85 },
-          { name: "Frontend", level: 40 }
+          { name: "UI Design", level: 5 },
+          { name: "Research", level: 4 },
+          { name: "Frontend", level: 2 }
         ],
         costRate: 100,
-        availability: 80
+        availability: 80,
+        aiAdoptionLevel: 60,
+        workingDays: [true, true, true, true, false]
       },
       {
         id: "tm-003",
         name: "Casey Zhang",
         role: "Backend Developer",
         skills: [
-          { name: "Backend", level: 95 },
-          { name: "Database", level: 90 },
-          { name: "DevOps", level: 75 }
+          { name: "Backend", level: 5 },
+          { name: "Database", level: 4 },
+          { name: "DevOps", level: 3 }
         ],
         costRate: 110,
-        availability: 100
+        availability: 100,
+        aiAdoptionLevel: 70,
+        workingDays: [true, true, true, true, true]
       },
       {
         id: "tm-004",
         name: "Riley Johnson",
         role: "QA Engineer",
         skills: [
-          { name: "Testing", level: 90 },
-          { name: "Automation", level: 85 },
-          { name: "Frontend", level: 30 }
+          { name: "Testing", level: 4 },
+          { name: "Automation", level: 4 },
+          { name: "Frontend", level: 2 }
         ],
         costRate: 95,
-        availability: 90
+        availability: 90,
+        aiAdoptionLevel: 65,
+        workingDays: [true, true, true, true, true]
       }
     ],
     velocityHistory: [
-      { sprint: "Sprint 1", plannedPoints: 25, completedPoints: 20, date: "2025-01-15" },
-      { sprint: "Sprint 2", plannedPoints: 28, completedPoints: 26, date: "2025-01-29" },
-      { sprint: "Sprint 3", plannedPoints: 30, completedPoints: 29, date: "2025-02-12" },
-      { sprint: "Sprint 4", plannedPoints: 32, completedPoints: 30, date: "2025-02-26" },
-      { sprint: "Sprint 5", plannedPoints: 35, completedPoints: 33, date: "2025-03-12" },
-      { sprint: "Sprint 6", plannedPoints: 35, completedPoints: 36, date: "2025-03-26" },
-    ]
+      { sprintId: "s1", sprintName: "Sprint 1", plannedPoints: 25, completedPoints: 20, completionRate: 80, date: "2025-01-15" },
+      { sprintId: "s2", sprintName: "Sprint 2", plannedPoints: 28, completedPoints: 26, completionRate: 93, date: "2025-01-29" },
+      { sprintId: "s3", sprintName: "Sprint 3", plannedPoints: 30, completedPoints: 29, completionRate: 97, date: "2025-02-12" },
+      { sprintId: "s4", sprintName: "Sprint 4", plannedPoints: 32, completedPoints: 30, completionRate: 94, date: "2025-02-26" },
+      { sprintId: "s5", sprintName: "Sprint 5", plannedPoints: 35, completedPoints: 33, completionRate: 94, date: "2025-03-12" },
+      { sprintId: "s6", sprintName: "Sprint 6", plannedPoints: 35, completedPoints: 36, completionRate: 103, date: "2025-03-26" },
+    ],
+    averageVelocity: 29,
+    capacityPerSprint: 32,
+    workingDaysPerSprint: 10,
+    sprintLength: 2,
+    ceremonyOverhead: 8
   };
 };
 
@@ -106,24 +141,28 @@ const TeamConfigurator: React.FC = () => {
     queryFn: fetchTeamConfiguration,
   });
   
-  const [teamName, setTeamName] = useState("");
+  const [activeTeam, setActiveTeam] = useState<TeamConfiguration | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   
-  const handleAddMember = () => {
-    console.log("Adding new team member");
-    // Implementation would add a new team member
+  // Set activeTeam once data is loaded
+  React.useEffect(() => {
+    if (teamConfig && !activeTeam) {
+      setActiveTeam(teamConfig);
+    }
+  }, [teamConfig, activeTeam]);
+  
+  const handleTeamUpdate = (updatedTeam: TeamConfiguration) => {
+    setActiveTeam(updatedTeam);
   };
   
   const handleSaveConfiguration = () => {
-    console.log("Saving team configuration");
+    console.log("Saving team configuration:", activeTeam);
     // Implementation would save the team configuration
+    toast.success("Team configuration saved successfully");
     setIsEditing(false);
   };
   
   const handleEditConfiguration = () => {
-    if (teamConfig) {
-      setTeamName(teamConfig.name);
-    }
     setIsEditing(true);
   };
 
@@ -147,7 +186,7 @@ const TeamConfigurator: React.FC = () => {
     return <div className="text-error">Error loading team configuration: {error.toString()}</div>;
   }
 
-  if (!teamConfig) {
+  if (!activeTeam) {
     return <div className="text-error">No team configuration found</div>;
   }
 
@@ -175,75 +214,112 @@ const TeamConfigurator: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="border rounded-lg p-4 bg-card">
-          <h3 className="font-medium text-lg mb-4">Team Composition</h3>
-          <TeamCompositionChart members={teamConfig.members} />
-        </div>
-        
-        <div className="border rounded-lg p-4 bg-card">
-          <h3 className="font-medium text-lg mb-4">Velocity Trends</h3>
-          <VelocityTrendChart velocityHistory={teamConfig.velocityHistory} />
-        </div>
-      </div>
+      <Tabs defaultValue="composition" className="w-full">
+        <TabsList className="grid grid-cols-4 mb-6">
+          <TabsTrigger value="composition" className="flex items-center gap-2">
+            <Users size={16} />
+            <span>Team Composition</span>
+          </TabsTrigger>
+          <TabsTrigger value="velocity" className="flex items-center gap-2">
+            <BarChart2 size={16} />
+            <span>Velocity Analysis</span>
+          </TabsTrigger>
+          <TabsTrigger value="optimization" className="flex items-center gap-2">
+            <Lightbulb size={16} />
+            <span>Optimization</span>
+          </TabsTrigger>
+          <TabsTrigger value="patterns" className="flex items-center gap-2">
+            <Calendar size={16} />
+            <span>Working Patterns</span>
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="border rounded-lg p-4 bg-card">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="font-medium text-lg">Team Members</h3>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={handleAddMember}
-            leftIcon={<Plus size={16} />}
-            disabled={!isEditing}
-          >
-            Add Member
-          </Button>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="bg-muted text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Skills</th>
-                <th className="px-4 py-3">Cost Rate</th>
-                <th className="px-4 py-3">Availability</th>
-                {isEditing && <th className="px-4 py-3">Actions</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {teamConfig.members.map((member) => (
-                <tr key={member.id} className="border-t border-border hover:bg-muted/30">
-                  <td className="px-4 py-3 font-medium">{member.name}</td>
-                  <td className="px-4 py-3">{member.role}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {member.skills.map((skill) => (
-                        <span 
-                          key={skill.name} 
-                          className="bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200 px-1.5 py-0.5 text-xs rounded"
-                          title={`Level: ${skill.level}/100`}
-                        >
-                          {skill.name}
-                        </span>
-                      ))}
+        <TabsContent value="composition" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card className="h-full">
+                <TeamCompositionEditor 
+                  team={activeTeam} 
+                  onTeamChange={handleTeamUpdate} 
+                  isEditing={isEditing} 
+                />
+              </Card>
+            </div>
+            <div>
+              <Card>
+                <TeamCompositionChart members={activeTeam.members} />
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="velocity" className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card>
+                <VelocityTrendChart velocityHistory={activeTeam.velocityHistory} />
+              </Card>
+            </div>
+            <div>
+              <Card className="h-full">
+                <div className="p-4">
+                  <h3 className="text-lg font-semibold mb-3">Velocity Metrics</h3>
+                  <div className="space-y-4">
+                    <div className="bg-muted/30 p-4 rounded-md">
+                      <div className="text-3xl font-bold text-center">{activeTeam.averageVelocity}</div>
+                      <div className="text-sm text-center text-muted-foreground">Average Velocity</div>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">${member.costRate}/hr</td>
-                  <td className="px-4 py-3">{member.availability}%</td>
-                  {isEditing && (
-                    <td className="px-4 py-3">
-                      <Button variant="ghost" size="sm">Edit</Button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    
+                    <div className="bg-muted/30 p-4 rounded-md">
+                      <div className="text-3xl font-bold text-center">{activeTeam.capacityPerSprint}</div>
+                      <div className="text-sm text-center text-muted-foreground">Capacity Per Sprint</div>
+                    </div>
+                    
+                    <div className="bg-muted/30 p-4 rounded-md">
+                      <div className="flex items-center justify-center">
+                        <Gauge className="w-8 h-8 text-primary mr-2" />
+                        <span className="text-xl font-semibold">
+                          {Math.round((activeTeam.averageVelocity / activeTeam.capacityPerSprint) * 100)}%
+                        </span>
+                      </div>
+                      <div className="text-sm text-center text-muted-foreground">Capacity Utilization</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+          
+          <Card>
+            <VelocityDataTable 
+              velocityData={activeTeam.velocityHistory} 
+              isEditing={isEditing}
+              onDataChange={(updatedData) => {
+                handleTeamUpdate({
+                  ...activeTeam,
+                  velocityHistory: updatedData
+                });
+              }}
+            />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="optimization" className="space-y-4">
+          <Card>
+            <TeamOptimizationView team={activeTeam} />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="patterns" className="space-y-4">
+          <Card>
+            <WorkingPatternConfig 
+              team={activeTeam}
+              isEditing={isEditing}
+              onPatternChange={(updatedTeam) => handleTeamUpdate(updatedTeam)}
+            />
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

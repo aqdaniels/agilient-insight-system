@@ -1,5 +1,6 @@
+
 import React from "react";
-import { TeamVelocity } from "../containers/TeamConfigurator";
+import { VelocityData } from "../containers/TeamConfigurator";
 import {
   LineChart,
   Line,
@@ -9,11 +10,13 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  ReferenceLine
+  ReferenceLine,
+  Area,
+  AreaChart
 } from "recharts";
 
 interface VelocityTrendChartProps {
-  velocityHistory: TeamVelocity[];
+  velocityHistory: VelocityData[];
 }
 
 const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory }) => {
@@ -21,6 +24,13 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
   const averageVelocity = velocityHistory.reduce(
     (sum, sprint) => sum + sprint.completedPoints, 0
   ) / velocityHistory.length;
+
+  // Calculate standard deviation
+  const squaredDiffs = velocityHistory.map(sprint => 
+    Math.pow(sprint.completedPoints - averageVelocity, 2)
+  );
+  const variance = squaredDiffs.reduce((sum, squaredDiff) => sum + squaredDiff, 0) / velocityHistory.length;
+  const stdDev = Math.sqrt(variance);
 
   // Calculate trend line points for future prediction
   // Simple linear regression
@@ -42,22 +52,34 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
   for (let i = 1; i <= 3; i++) {
     const sprintNum = n + i;
     const predictedVelocity = intercept + slope * sprintNum;
+    const sprintNumber = n + i;
     
     predictedData.push({
-      sprint: `Sprint ${n + i} (Projected)`,
+      sprintId: `projected-${i}`,
+      sprintName: `Sprint ${sprintNumber} (Projected)`,
       plannedPoints: Math.round(predictedVelocity),
       completedPoints: Math.round(predictedVelocity),
+      completionRate: 100,
       date: "Projected"
     });
   }
 
   // Function to determine stroke dasharray based on data
-  const getStrokeDashArray = (dataPoint: TeamVelocity) => {
+  const getStrokeDashArray = (dataPoint: VelocityData) => {
     return dataPoint.date === "Projected" ? "5 5" : "0";
   };
 
+  // Add standard deviation range for completed points
+  const dataWithDeviation = velocityHistory.map(item => ({
+    ...item,
+    upperBound: item.completedPoints + stdDev,
+    lowerBound: Math.max(0, item.completedPoints - stdDev)
+  }));
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4">
+      <h3 className="font-semibold text-lg">Velocity Analysis</h3>
+      
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -65,12 +87,12 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="sprint" />
+            <XAxis dataKey="sprintName" />
             <YAxis />
             <Tooltip
               formatter={(value, name) => [
                 value,
-                name === "plannedPoints" ? "Planned Points" : "Completed Points"
+                name === "plannedPoints" ? "Planned Points" : name === "completedPoints" ? "Completed Points" : name
               ]}
               labelFormatter={(label) => `${label}`}
             />
@@ -82,6 +104,7 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#8884d8"
               activeDot={{ r: 8 }}
               strokeWidth={2}
+              strokeDasharray={(dataPoint: any) => dataPoint.date === "Projected" ? "5 5" : "0"}
             />
             <Line
               type="monotone"
@@ -89,10 +112,54 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#82ca9d"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={getStrokeDashArray(predictedData[0])}
+              strokeDasharray={(dataPoint: any) => dataPoint.date === "Projected" ? "5 5" : "0"}
               connectNulls
             />
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="h-64 mt-8">
+        <h4 className="text-sm font-medium mb-2">Velocity Variability</h4>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={dataWithDeviation}
+            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="sprintName" />
+            <YAxis />
+            <Tooltip
+              formatter={(value, name) => {
+                if (name === "upperBound") return [`${value} (Upper Bound)`, 'Standard Deviation'];
+                if (name === "lowerBound") return [`${value} (Lower Bound)`, 'Standard Deviation'];
+                return [value, name === "completedPoints" ? "Completed Points" : name];
+              }}
+              labelFormatter={(label) => `${label}`}
+            />
+            <Area 
+              type="monotone" 
+              dataKey="upperBound" 
+              stroke="none" 
+              fill="#82ca9d" 
+              fillOpacity={0.2} 
+            />
+            <Area 
+              type="monotone" 
+              dataKey="lowerBound" 
+              stroke="none" 
+              fill="#82ca9d" 
+              fillOpacity={0} 
+            />
+            <Line
+              type="monotone"
+              dataKey="completedPoints"
+              stroke="#82ca9d"
+              strokeWidth={2}
+              dot={{ r: 4 }}
+            />
+            <ReferenceLine y={averageVelocity} stroke="#ff7300" strokeDasharray="3 3" />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
 

@@ -45,7 +45,7 @@ const TeamCompositionChart: React.FC<TeamCompositionChartProps> = ({ members }) 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="h-64">
           <h4 className="text-sm font-medium text-center mb-2">Role Distribution</h4>
@@ -58,7 +58,12 @@ const TeamCompositionChart: React.FC<TeamCompositionChartProps> = ({ members }) 
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) => {
+                  if (typeof percent === 'number') {
+                    return `${name}: ${(percent * 100).toFixed(0)}%`;
+                  }
+                  return `${name}`;
+                }}
               >
                 {roleData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -87,8 +92,8 @@ const TeamCompositionChart: React.FC<TeamCompositionChartProps> = ({ members }) 
                 ))}
               </Pie>
               <Tooltip formatter={(value) => {
-                const numValue = typeof value === 'number' ? value.toFixed(0) : value;
-                return [`Level: ${numValue}/100`, 'Avg. Proficiency'];
+                const numValue = typeof value === 'number' ? value.toFixed(1) : value;
+                return [`Level: ${numValue}/5`, 'Avg. Proficiency'];
               }} />
               <Legend />
             </PieChart>
