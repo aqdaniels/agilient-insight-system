@@ -77,17 +77,10 @@ const WorkingPatternConfig: React.FC<WorkingPatternConfigProps> = ({
     }
   };
 
-  const handleDateSelect = (date: Date | undefined) => {
-    if (date) {
-      // Toggle date selection
-      const dateStr = date.toDateString();
-      const isSelected = selectedDates.some(d => d.toDateString() === dateStr);
-      
-      if (isSelected) {
-        setSelectedDates(selectedDates.filter(d => d.toDateString() !== dateStr));
-      } else {
-        setSelectedDates([...selectedDates, date]);
-      }
+  // Modify the handler to match the Calendar component's expected types
+  const handleDateSelect = (dates: Date[] | undefined) => {
+    if (dates) {
+      setSelectedDates(dates);
     }
   };
 

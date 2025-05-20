@@ -104,7 +104,12 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#8884d8"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={(dataPoint: any) => dataPoint.date === "Projected" ? "5 5" : "0"}
+              strokeDasharray={(dataPoint) => {
+                if (typeof dataPoint === 'object' && dataPoint && 'date' in dataPoint) {
+                  return (dataPoint as VelocityData).date === "Projected" ? "5 5" : "0";
+                }
+                return "0";
+              }}
             />
             <Line
               type="monotone"
@@ -112,7 +117,12 @@ const VelocityTrendChart: React.FC<VelocityTrendChartProps> = ({ velocityHistory
               stroke="#82ca9d"
               activeDot={{ r: 8 }}
               strokeWidth={2}
-              strokeDasharray={(dataPoint: any) => dataPoint.date === "Projected" ? "5 5" : "0"}
+              strokeDasharray={(dataPoint) => {
+                if (typeof dataPoint === 'object' && dataPoint && 'date' in dataPoint) {
+                  return (dataPoint as VelocityData).date === "Projected" ? "5 5" : "0";
+                }
+                return "0";
+              }}
               connectNulls
             />
           </LineChart>
