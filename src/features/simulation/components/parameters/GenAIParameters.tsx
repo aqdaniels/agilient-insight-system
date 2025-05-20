@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Form,
@@ -81,7 +80,7 @@ const GenAIParameters: React.FC<GenAIParametersProps> = ({
         <h2 className="text-lg font-medium">GenAI Acceleration Settings</h2>
         <Tooltip>
           <TooltipTrigger>
-            <InfoCircle size={16} className="text-muted-foreground" />
+            <Info size={16} className="text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-sm">
             <p>Configure how AI tools will augment your team's capabilities. These settings determine the productivity impact of AI accelerators.</p>

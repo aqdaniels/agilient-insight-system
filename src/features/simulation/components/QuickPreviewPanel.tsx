@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge, ProgressBar, StatusIndicator } from "@/components/design-system";
 import { SimulationScenario } from "../types";
@@ -129,7 +129,7 @@ const QuickPreviewPanel: React.FC<QuickPreviewPanelProps> = ({
             <div className="flex flex-wrap gap-1">
               {scenario.genAIConfiguration.accelerators.length > 0 ? (
                 scenario.genAIConfiguration.accelerators.map((accelerator) => (
-                  <Badge key={accelerator} variant="primary" size="sm">
+                  <Badge key={accelerator} variant="default" size="sm">
                     {accelerator === "acc1" ? "Code Copilot Pro" :
                      accelerator === "acc2" ? "Requirements Analyzer" :
                      accelerator === "acc3" ? "Test Generation Suite" :
