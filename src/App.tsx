@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import GenAIAcceleratorManager from "./features/genai/containers/GenAIAcceleratorManager";
 import SimulationSetup from "./features/simulation/containers/SimulationSetup";
+import CortexIntegration from "./features/integration/containers/CortexIntegration";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/genai" element={<GenAIAcceleratorManager />} />
           <Route path="/simulation" element={<SimulationSetup />} />
+          <Route path="/integration/cortex" element={<CortexIntegration />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

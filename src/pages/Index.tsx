@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/design-system';
+import { Database, Link2 } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -38,7 +39,24 @@ const Index = () => {
           <p className="text-muted-foreground mb-4">
             Run simulations to predict project outcomes and optimize resource allocation.
           </p>
-          <Button variant="secondary" disabled>Coming Soon</Button>
+          <Link to="/simulation">
+            <Button variant="secondary">View Simulations</Button>
+          </Link>
+        </div>
+        
+        <div className="bg-card rounded-lg shadow-md p-6 border border-border/50 hover:border-primary/50 transition-colors">
+          <div className="flex justify-between items-start mb-2">
+            <h2 className="text-xl font-semibold">Cortex Digital Twin</h2>
+            <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium">New</div>
+          </div>
+          <p className="text-muted-foreground mb-4">
+            Connect with DXC Cortex Digital Twin to enhance your delivery simulations with historical data.
+          </p>
+          <Link to="/integration/cortex">
+            <Button variant="outline" leftIcon={<Link2 size={16} />}>
+              Configure Integration
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
