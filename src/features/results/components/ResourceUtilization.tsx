@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart, 
@@ -11,7 +10,6 @@ import {
   Legend, 
   ResponsiveContainer, 
   Cell,
-  HeatMapProps,
   Scatter,
   ScatterChart,
   ZAxis,

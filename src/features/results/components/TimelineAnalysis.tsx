@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -16,7 +15,7 @@ import {
 } from "recharts";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { SimulationResults } from "../../simulation/types";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";  // Replace InfoCircle with Info
 import { format } from "date-fns";
 
 interface TimelineAnalysisProps {
@@ -124,7 +123,7 @@ const TimelineAnalysis: React.FC<TimelineAnalysisProps> = ({ results }) => {
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium flex items-center">
               <span>Completion Confidence Over Time</span>
-              <InfoCircle size={16} className="ml-2 text-muted-foreground" />
+              <Info size={16} className="ml-2 text-muted-foreground" />
             </CardTitle>
           </CardHeader>
           <CardContent>

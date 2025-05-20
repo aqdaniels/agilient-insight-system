@@ -1,9 +1,11 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { Button } from "@/components/design-system";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/design-system"; 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Select, 
   SelectContent, 
@@ -11,308 +13,535 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from "@/components/ui/table";
-import { Badge } from "@/components/design-system";
-import { UserCheck, Shield, Settings, RefreshCw, Clock, Check, X } from "lucide-react";
-
-// Role mapping types
-interface Role {
-  id: string;
-  name: string;
-  description: string;
-  source: "agilient" | "cortex";
-}
-
-interface RoleMapping {
-  aglientRole: string;
-  cortexRole: string;
-  isActive: boolean;
-}
+import { 
+  AlertCircle, 
+  Check, 
+  ChevronRight, 
+  Key, 
+  Lock, 
+  RefreshCw, 
+  Shield, 
+  User, 
+  UserPlus, 
+  Users 
+} from "lucide-react";
 
 const CortexAuthIntegration: React.FC = () => {
-  const [ssoEnabled, setSsoEnabled] = useState(true);
-  const [userSyncEnabled, setUserSyncEnabled] = useState(true);
-  const [auditEnabled, setAuditEnabled] = useState(true);
-
-  // Sample role data
-  const aglientRoles: Role[] = [
-    { id: "admin", name: "Administrator", description: "Full system access", source: "agilient" },
-    { id: "manager", name: "Project Manager", description: "Manage projects and teams", source: "agilient" },
-    { id: "analyst", name: "Business Analyst", description: "Configure and analyze scenarios", source: "agilient" },
-    { id: "viewer", name: "Viewer", description: "Read-only access", source: "agilient" },
-  ];
-
-  const cortexRoles: Role[] = [
-    { id: "cortex-admin", name: "Cortex Administrator", description: "Full Cortex access", source: "cortex" },
-    { id: "cortex-author", name: "Twin Author", description: "Create and edit twins", source: "cortex" },
-    { id: "cortex-analyst", name: "Data Analyst", description: "Analyze twin data", source: "cortex" },
-    { id: "cortex-viewer", name: "Twin Viewer", description: "View-only access to twins", source: "cortex" },
-  ];
-
-  // Sample role mappings
-  const [roleMappings, setRoleMappings] = useState<RoleMapping[]>([
-    { aglientRole: "admin", cortexRole: "cortex-admin", isActive: true },
-    { aglientRole: "manager", cortexRole: "cortex-author", isActive: true },
-    { aglientRole: "analyst", cortexRole: "cortex-analyst", isActive: true },
-    { aglientRole: "viewer", cortexRole: "cortex-viewer", isActive: true },
-  ]);
-
-  // Find role details by ID
-  const getRoleDetails = (id: string): Role | undefined => {
-    return [...aglientRoles, ...cortexRoles].find(role => role.id === id);
-  };
-
-  // Toggle mapping status
-  const toggleMappingStatus = (aglientRole: string, cortexRole: string) => {
-    setRoleMappings(prev => 
-      prev.map(mapping => 
-        mapping.aglientRole === aglientRole && mapping.cortexRole === cortexRole
-          ? { ...mapping, isActive: !mapping.isActive }
-          : mapping
-      )
-    );
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Authentication Integration</h2>
-        <Button 
-          variant="primary" 
-          leftIcon={<RefreshCw size={16} />}
-        >
-          Sync Authentication Settings
-        </Button>
+        <h2 className="text-2xl font-bold">Authentication & Authorization</h2>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" leftIcon={<RefreshCw size={16} />}>
+            Test Connection
+          </Button>
+          <Button variant="primary" leftIcon={<Check size={16} />}>
+            Save Settings
+          </Button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <UserCheck size={18} />
-              <span>SSO Configuration</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <Label>Enable Single Sign-On</Label>
-              <Switch checked={ssoEnabled} onCheckedChange={setSsoEnabled} />
-            </div>
-            <div className="space-y-2">
-              <Label>Identity Provider</Label>
-              <Select defaultValue="azure">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select provider" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="azure">Azure AD</SelectItem>
-                  <SelectItem value="okta">Okta</SelectItem>
-                  <SelectItem value="google">Google Workspace</SelectItem>
-                  <SelectItem value="auth0">Auth0</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>SSO Login URL</Label>
-              <Input 
-                value="https://login.microsoftonline.com/tenant-id/oauth2/v2.0/authorize" 
-                onChange={() => {}}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Logout URL</Label>
-              <Input 
-                value="https://login.microsoftonline.com/tenant-id/oauth2/v2.0/logout" 
-                onChange={() => {}}
-              />
-            </div>
-            <Button className="w-full" variant="outline">
-              Test SSO Connection
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <Shield size={18} />
-              <span>Permission Settings</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Default Role for New Users</Label>
-              <Select defaultValue="viewer">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select default role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {aglientRoles.map(role => (
-                    <SelectItem key={role.id} value={role.id}>
-                      {role.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Label>Enable Permission Inheritance</Label>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Label>Auto-provision New Users</Label>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Label>Require Email Verification</Label>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className="pt-2">
-              <Button className="w-full" variant="outline">
-                Advanced Permission Settings
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="sso" className="w-full">
+        <TabsList className="grid grid-cols-3 w-full">
+          <TabsTrigger value="sso">Single Sign-On</TabsTrigger>
+          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
+        </TabsList>
         
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <Settings size={18} />
-              <span>Sync Settings</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <Label>User Synchronization</Label>
-                <p className="text-sm text-muted-foreground">Sync users between systems</p>
-              </div>
-              <Switch checked={userSyncEnabled} onCheckedChange={setUserSyncEnabled} />
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <div>
-                <Label>Audit Logging</Label>
-                <p className="text-sm text-muted-foreground">Track authentication events</p>
-              </div>
-              <Switch checked={auditEnabled} onCheckedChange={setAuditEnabled} />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Sync Frequency</Label>
-              <Select defaultValue="6h">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1h">Every hour</SelectItem>
-                  <SelectItem value="6h">Every 6 hours</SelectItem>
-                  <SelectItem value="12h">Every 12 hours</SelectItem>
-                  <SelectItem value="24h">Daily</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="bg-muted/30 p-3 rounded-md flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-muted-foreground" />
-                <div className="text-sm">Last sync completed</div>
-              </div>
-              <div className="font-medium">Today, 10:42 AM</div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle>Role Mapping Matrix</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Agilient Role</TableHead>
-                <TableHead className="w-[200px]">Cortex Role</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="w-[100px]">Status</TableHead>
-                <TableHead className="w-[80px]">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {roleMappings.map((mapping) => {
-                const aglientRole = getRoleDetails(mapping.aglientRole);
-                const cortexRole = getRoleDetails(mapping.cortexRole);
+        <TabsContent value="sso" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>SSO Configuration</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>Authentication Provider</Label>
+                  <Select defaultValue="azure">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="azure">Azure AD</SelectItem>
+                      <SelectItem value="okta">Okta</SelectItem>
+                      <SelectItem value="auth0">Auth0</SelectItem>
+                      <SelectItem value="custom">Custom OIDC</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 
-                return (
-                  <TableRow key={`${mapping.aglientRole}-${mapping.cortexRole}`}>
+                <div className="space-y-2">
+                  <Label>Connection Status</Label>
+                  <div className="flex items-center gap-2 h-10 px-3 border rounded-md bg-success/10 border-success text-success">
+                    <Check size={16} />
+                    <span>Connected & Verified</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>Client ID</Label>
+                  <Input value="8f4b7c9e-1d2a-4b3c-8d7e-5f6g7h8j9k0l" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Tenant ID</Label>
+                  <Input value="dxc-cortex-prod" />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label>Redirect URI</Label>
+                  <Input value="https://app.cortex.dxc.com/auth/callback" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Logout URL</Label>
+                  <Input value="https://app.cortex.dxc.com/auth/logout" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Client Secret</Label>
+                <div className="flex gap-2">
+                  <Input type="password" value="••••••••••••••••••••••••••••••" className="flex-grow" />
+                  <Button variant="outline">Show</Button>
+                  <Button variant="outline" leftIcon={<RefreshCw size={16} />}>Rotate</Button>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div className="space-y-0.5">
+                  <Label>Enable SSO</Label>
+                  <div className="text-sm text-muted-foreground">Allow users to sign in with corporate credentials</div>
+                </div>
+                <Switch defaultChecked />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Advanced Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Force SSO</Label>
+                  <div className="text-sm text-muted-foreground">Require all users to authenticate via SSO</div>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Auto-provision Users</Label>
+                  <div className="text-sm text-muted-foreground">Automatically create user accounts on first login</div>
+                </div>
+                <Switch defaultChecked />
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Session Timeout</Label>
+                  <div className="text-sm text-muted-foreground">Time in minutes before requiring re-authentication</div>
+                </div>
+                <div className="w-24">
+                  <Input type="number" defaultValue="60" min="5" max="1440" />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>JWT Token Lifetime</Label>
+                  <div className="text-sm text-muted-foreground">Time in minutes before token expiration</div>
+                </div>
+                <div className="w-24">
+                  <Input type="number" defaultValue="30" min="5" max="60" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="users" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>User Directory</CardTitle>
+              <Button variant="outline" leftIcon={<UserPlus size={16} />}>Add User</Button>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Last Login</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">John Smith</TableCell>
+                    <TableCell>john.smith@dxc.com</TableCell>
                     <TableCell>
-                      <Badge variant="secondary">{aglientRole?.name || mapping.aglientRole}</Badge>
+                      <Badge variant="outline">Admin</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">{cortexRole?.name || mapping.cortexRole}</Badge>
+                      <Badge variant="success">Active</Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {aglientRole?.description} → {cortexRole?.description}
-                    </TableCell>
+                    <TableCell>2 hours ago</TableCell>
                     <TableCell>
-                      {mapping.isActive ? (
-                        <Badge variant="success" className="inline-flex items-center gap-1">
-                          <Check size={12} />
-                          <span>Active</span>
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="inline-flex items-center gap-1">
-                          <X size={12} />
-                          <span>Disabled</span>
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleMappingStatus(mapping.aglientRole, mapping.cortexRole)}
-                      >
-                        {mapping.isActive ? "Disable" : "Enable"}
-                      </Button>
+                      <Button variant="ghost" size="sm">Edit</Button>
                     </TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-          <div className="flex justify-end mt-4">
-            <Button variant="outline">Add New Mapping</Button>
+                  <TableRow>
+                    <TableCell className="font-medium">Sarah Johnson</TableCell>
+                    <TableCell>sarah.johnson@dxc.com</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">Editor</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="success">Active</Badge>
+                    </TableCell>
+                    <TableCell>1 day ago</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">Edit</Button>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Michael Chen</TableCell>
+                    <TableCell>michael.chen@dxc.com</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">Viewer</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="warning">Pending</Badge>
+                    </TableCell>
+                    <TableCell>Never</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">Edit</Button>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Emma Wilson</TableCell>
+                    <TableCell>emma.wilson@dxc.com</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">Editor</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="error">Disabled</Badge>
+                    </TableCell>
+                    <TableCell>30 days ago</TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">Edit</Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Groups</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} />
+                    <span className="font-medium">Administrators</span>
+                  </div>
+                  <Badge variant="outline">5 users</Badge>
+                  <ChevronRight size={16} className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} />
+                    <span className="font-medium">Data Scientists</span>
+                  </div>
+                  <Badge variant="outline">12 users</Badge>
+                  <ChevronRight size={16} className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} />
+                    <span className="font-medium">Engineers</span>
+                  </div>
+                  <Badge variant="outline">8 users</Badge>
+                  <ChevronRight size={16} className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Users size={16} />
+                    <span className="font-medium">Analysts</span>
+                  </div>
+                  <Badge variant="outline">15 users</Badge>
+                  <ChevronRight size={16} className="text-muted-foreground" />
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>User Roles</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Shield size={16} />
+                    <span className="font-medium">Admin</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Full system access</div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Shield size={16} />
+                    <span className="font-medium">Editor</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Create and modify content</div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Shield size={16} />
+                    <span className="font-medium">Viewer</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Read-only access</div>
+                </div>
+                <div className="flex items-center justify-between p-2 hover:bg-muted/50 rounded-md">
+                  <div className="flex items-center gap-2">
+                    <Shield size={16} />
+                    <span className="font-medium">Guest</span>
+                  </div>
+                  <div className="text-sm text-muted-foreground">Limited dashboard access</div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle>Authentication Audit Log</CardTitle>
-        </CardHeader>
-        <CardContent className="h-[300px] flex items-center justify-center bg-muted/30 rounded-md">
-          <div className="text-center">
-            <Shield className="h-10 w-10 mx-auto text-muted-foreground" />
-            <p className="mt-2">Authentication audit log will appear here</p>
-            <p className="text-sm text-muted-foreground">Tracking login attempts, permission changes, and system access</p>
+        </TabsContent>
+        
+        <TabsContent value="permissions" className="mt-6 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Permission Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Resource</TableHead>
+                    <TableHead>Admin</TableHead>
+                    <TableHead>Editor</TableHead>
+                    <TableHead>Viewer</TableHead>
+                    <TableHead>Guest</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">Digital Twins</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Edit</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">View</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Simulations</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Edit</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">View</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">Reports</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Edit</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">View</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">View</Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">User Management</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">API Access</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Limited</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="warning">Read</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">System Settings</TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="success">Full</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="error">None</Badge>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Security Settings</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Two-Factor Authentication</Label>
+                    <div className="text-sm text-muted-foreground">Require 2FA for all admin users</div>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>IP Restrictions</Label>
+                    <div className="text-sm text-muted-foreground">Limit access to specific IP ranges</div>
+                  </div>
+                  <Switch />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Audit Logging</Label>
+                    <div className="text-sm text-muted-foreground">Track all user actions</div>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label>Password Policy</Label>
+                    <div className="text-sm text-muted-foreground">Enforce strong password requirements</div>
+                  </div>
+                  <Select defaultValue="high">
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">Basic</SelectItem>
+                      <SelectItem value="medium">Standard</SelectItem>
+                      <SelectItem value="high">Strong</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle>API Authentication</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 border rounded-md bg-muted/30 flex items-start gap-3">
+                  <AlertCircle size={18} className="text-warning mt-0.5" />
+                  <div>
+                    <h4 className="font-medium">API Keys</h4>
+                    <p className="text-sm text-muted-foreground">
+                      API keys provide access to Cortex APIs. Treat them like passwords and do not share them.
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>Active API Keys</Label>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 border rounded-md">
+                      <div className="flex items-center gap-2">
+                        <Key size={16} />
+                        <span className="font-mono text-sm">cortex-prod-key-1</span>
+                      </div>
+                      <Badge variant="outline">Created 30 days ago</Badge>
+                    </div>
+                    <div className="flex items-center justify-between p-2 border rounded-md">
+                      <div className="flex items-center gap-2">
+                        <Key size={16} />
+                        <span className="font-mono text-sm">cortex-dev-key-1</span>
+                      </div>
+                      <Badge variant="outline">Created 60 days ago</Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between gap-2">
+                  <Button variant="outline" className="w-full" leftIcon={<Key size={16} />}>
+                    Generate New Key
+                  </Button>
+                  <Button variant="outline" className="w-full" leftIcon={<Lock size={16} />}>
+                    Manage Keys
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

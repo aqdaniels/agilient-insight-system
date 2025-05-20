@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/design-system";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { StatusIndicator } from "@/components/design-system";
-import { Check, Link, Link2, RefreshCw, Settings, Calendar, Info } from "lucide-react";
+import { Check, Link, Link2, RefreshCw, Settings, Calendar, Info, BarChart } from "lucide-react";
 
 interface ApiEndpoint {
   id: string;

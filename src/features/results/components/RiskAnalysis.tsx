@@ -90,7 +90,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
               
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">High Risk Items</span>
-                <Badge variant="destructive">
+                <Badge variant="error">
                   {riskFactors.filter(r => getRiskLevel(calculateRiskScore(r.impact, r.probability)) === "high").length}
                 </Badge>
               </div>
@@ -190,7 +190,7 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                     <TableCell>{score.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge 
-                        variant={level === "high" ? "destructive" : level === "medium" ? "warning" : "success"}
+                        variant={level === "high" ? "error" : level === "medium" ? "warning" : "success"}
                       >
                         {level.charAt(0).toUpperCase() + level.slice(1)}
                       </Badge>
