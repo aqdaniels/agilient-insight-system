@@ -132,9 +132,6 @@ const RiskAnalysis: React.FC<RiskAnalysisProps> = ({ riskFactors }) => {
                         <Cell key={`cell-${index}`} fill={getRiskColor(entry.score)} />
                       ))}
                     </Scatter>
-                    {/* Risk quadrant dividing lines */}
-                    <line x1="0.5" y1="0" x2="0.5" y2="1" stroke="#666" strokeDasharray="3 3" />
-                    <line x1="0" y1="0.5" x2="1" y2="0.5" stroke="#666" strokeDasharray="3 3" />
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
