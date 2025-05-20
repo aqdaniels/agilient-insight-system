@@ -1,92 +1,186 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=JetBrains+Mono:wght@100..800&display=swap');
+
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base */
+    --background: 212 45% 98%;
+    --foreground: 214 60% 15%;
+    --card: 212 45% 100%;
+    --card-foreground: 214 60% 15%;
+    --popover: 212 45% 100%;
+    --popover-foreground: 214 60% 15%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 214 59% 70%;
+    --radius-sm: 0.25rem;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
+    /* Primary Colors - Modern Blue Palette */
+    --primary-50: 210 100% 98%;
+    --primary-100: 210 100% 95%;
+    --primary-200: 210 100% 90%;
+    --primary-300: 210 94% 84%;
+    --primary-400: 210 94% 70%;
+    --primary-500: 210 94% 52%;
+    --primary: 210 94% 52%; /* Primary default = 500 */
+    --primary-600: 210 98% 44%;
+    --primary-700: 210 98% 37%;
+    --primary-800: 210 92% 30%;
+    --primary-900: 210 92% 25%;
+    --primary-950: 214 95% 15%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary Colors - Purple Accent */
+    --secondary-50: 250 100% 98%;
+    --secondary-100: 250 100% 95%;
+    --secondary-200: 250 95% 90%;
+    --secondary-300: 250 95% 84%;
+    --secondary-400: 250 90% 70%;
+    --secondary-500: 250 90% 60%;
+    --secondary: 250 90% 60%; /* Secondary default = 500 */
+    --secondary-600: 250 85% 50%;
+    --secondary-700: 250 85% 40%;
+    --secondary-800: 250 80% 35%;
+    --secondary-900: 250 75% 30%;
+    --secondary-950: 252 75% 25%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Neutral Colors - Grayscale */
+    --neutral-50: 210 20% 98%;
+    --neutral-100: 210 15% 95%;
+    --neutral-200: 210 15% 90%;
+    --neutral-300: 210 10% 80%;
+    --neutral-400: 210 10% 65%;
+    --neutral-500: 210 8% 50%;
+    --neutral-600: 210 8% 40%;
+    --neutral-700: 214 10% 30%;
+    --neutral-800: 214 15% 20%;
+    --neutral-900: 214 25% 15%;
+    --neutral-950: 214 35% 10%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Semantic Colors */
+    --success: 145 65% 42%;
+    --success-foreground: 145 65% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 100% 10%;
+    --error: 358 75% 59%;
+    --error-foreground: 358 100% 98%;
+    --info: 210 94% 52%;
+    --info-foreground: 210 40% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Data Visualization Colors */
+    --data-blue: 210 94% 52%;
+    --data-green: 145 65% 42%;
+    --data-purple: 250 90% 60%;
+    --data-orange: 28 92% 58%;
+    --data-teal: 175 70% 45%;
+    --data-red: 358 75% 59%;
+    --data-yellow: 45 93% 58%;
+    --data-indigo: 226 70% 55%;
+    --data-pink: 330 85% 62%;
+    --data-gray: 210 10% 65%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* UI Colors */
+    --muted: 214 10% 95%;
+    --muted-foreground: 214 20% 45%;
+    --accent: 210 40% 92%;
+    --accent-foreground: 214 60% 15%;
+    --destructive: 358 75% 59%;
+    --destructive-foreground: 358 100% 98%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 214 60% 10%;
+    --foreground: 210 10% 90%;
+    --card: 214 50% 12%;
+    --card-foreground: 210 10% 90%;
+    --popover: 214 50% 12%;
+    --popover-foreground: 210 10% 90%;
+    --border: 214 30% 20%;
+    --input: 214 30% 20%;
+    --ring: 214 59% 50%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Primary Colors - Modern Blue Palette */
+    --primary-50: 210 95% 15%;
+    --primary-100: 210 95% 20%;
+    --primary-200: 210 92% 25%;
+    --primary-300: 210 92% 30%;
+    --primary-400: 210 94% 40%;
+    --primary-500: 210 94% 48%;
+    --primary: 210 94% 52%; /* Primary remains the same in dark mode for consistency */
+    --primary-600: 210 94% 65%;
+    --primary-700: 210 94% 75%;
+    --primary-800: 210 100% 85%;
+    --primary-900: 210 100% 90%;
+    --primary-950: 210 100% 95%;
+    --primary-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    /* Secondary Colors - Purple Accent */
+    --secondary-50: 250 75% 20%;
+    --secondary-100: 250 75% 25%;
+    --secondary-200: 250 80% 30%;
+    --secondary-300: 250 85% 35%;
+    --secondary-400: 250 85% 45%;
+    --secondary-500: 250 90% 55%;
+    --secondary: 250 90% 60%; /* Secondary remains the same for consistency */
+    --secondary-600: 250 90% 65%;
+    --secondary-700: 250 95% 75%;
+    --secondary-800: 250 95% 85%;
+    --secondary-900: 250 100% 90%;
+    --secondary-950: 250 100% 95%;
+    --secondary-foreground: 0 0% 100%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Neutral Colors - Grayscale (reversed for dark mode) */
+    --neutral-950: 210 20% 98%;
+    --neutral-900: 210 15% 95%;
+    --neutral-800: 210 15% 85%;
+    --neutral-700: 210 10% 75%;
+    --neutral-600: 210 10% 65%;
+    --neutral-500: 210 8% 50%;
+    --neutral-400: 210 8% 40%;
+    --neutral-300: 214 10% 30%;
+    --neutral-200: 214 15% 25%;
+    --neutral-100: 214 20% 20%;
+    --neutral-50: 214 25% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Semantic Colors (adjusted for dark mode) */
+    --success: 145 65% 45%;
+    --success-foreground: 145 65% 98%;
+    --warning: 38 92% 60%;
+    --warning-foreground: 38 100% 10%;
+    --error: 358 75% 65%;
+    --error-foreground: 358 100% 98%;
+    --info: 210 94% 60%;
+    --info-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    /* Data Visualization Colors (slightly brightened for dark mode) */
+    --data-blue: 210 94% 60%;
+    --data-green: 145 65% 50%;
+    --data-purple: 250 90% 65%;
+    --data-orange: 28 92% 65%;
+    --data-teal: 175 70% 50%;
+    --data-red: 358 75% 65%;
+    --data-yellow: 45 93% 65%;
+    --data-indigo: 226 70% 60%;
+    --data-pink: 330 85% 68%;
+    --data-gray: 210 10% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* UI Colors */
+    --muted: 214 20% 18%;
+    --muted-foreground: 214 10% 65%;
+    --accent: 214 30% 20%;
+    --accent-foreground: 210 10% 90%;
+    --destructive: 358 75% 59%;
+    --destructive-foreground: 358 100% 98%;
   }
 }
 
@@ -94,8 +188,116 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Typography Scale */
+  h1, .h1 {
+    @apply text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl;
+  }
+  
+  h2, .h2 {
+    @apply text-3xl font-bold tracking-tight md:text-4xl;
+  }
+  
+  h3, .h3 {
+    @apply text-2xl font-bold md:text-3xl;
+  }
+  
+  h4, .h4 {
+    @apply text-xl font-semibold;
+  }
+  
+  h5, .h5 {
+    @apply text-lg font-semibold;
+  }
+  
+  h6, .h6 {
+    @apply text-base font-semibold;
+  }
+  
+  p, .body-lg {
+    @apply text-base leading-7;
+  }
+  
+  .body-md {
+    @apply text-sm leading-6;
+  }
+  
+  .body-sm {
+    @apply text-xs leading-5;
+  }
+  
+  code, .code {
+    @apply font-mono text-sm px-1 py-0.5 bg-neutral-100 rounded dark:bg-neutral-800;
+  }
+
+  /* Simple link styles */
+  a:not([class]) {
+    @apply text-primary-600 hover:text-primary-800 dark:text-primary-400 dark:hover:text-primary-300 underline-offset-4 hover:underline;
+  }
+}
+
+@layer components {
+  /* Spacing utilities */
+  .section {
+    @apply py-12 md:py-16 lg:py-24;
+  }
+  
+  .section-sm {
+    @apply py-8 md:py-10 lg:py-16;
+  }
+  
+  .container-padding {
+    @apply px-4 md:px-6 lg:px-8;
+  }
+  
+  /* Card variations */
+  .card-hover {
+    @apply transition-shadow hover:shadow-md;
+  }
+  
+  .card-interactive {
+    @apply transition-all hover:shadow-md hover:translate-y-[-2px] active:translate-y-0;
+  }
+  
+  /* Dashboard layout grid */
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6;
+  }
+  
+  /* Status indicators */
+  .status-dot {
+    @apply w-2 h-2 rounded-full;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  /* Form field wrapper */
+  .form-field {
+    @apply mb-4;
+  }
+  
+  /* Skeleton loading styles */
+  .skeleton {
+    @apply bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse-light;
+  }
+
+  /* Data visualization container */
+  .data-viz-container {
+    @apply bg-card p-4 rounded-lg shadow-sm border border-border;
+  }
+
+  /* Empty state */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 px-4 text-center text-neutral-500 border border-dashed border-neutral-300 rounded-lg;
+  }
+
+  /* Scrollbar styling */
+  .custom-scrollbar {
+    @apply scrollbar-thin scrollbar-thumb-neutral-300 dark:scrollbar-thumb-neutral-700 scrollbar-track-transparent;
   }
 }
