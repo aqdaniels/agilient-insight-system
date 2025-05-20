@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import GenAIAcceleratorManager from "./features/genai/containers/GenAIAcceleratorManager";
+import SimulationSetup from "./features/simulation/containers/SimulationSetup";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/genai" element={<GenAIAcceleratorManager />} />
+          <Route path="/simulation" element={<SimulationSetup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
