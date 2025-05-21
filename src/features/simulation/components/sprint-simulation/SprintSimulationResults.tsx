@@ -296,7 +296,7 @@ const SprintSimulationResults: React.FC<SprintSimulationResultsProps> = ({
                         label={{ 
                           value: "Target", 
                           position: "insideBottomRight",
-                          fontSize:, 
+                          fontSize: 12, 
                           fill: '#888'
                         }} 
                       />
