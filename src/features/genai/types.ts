@@ -18,6 +18,7 @@ export interface GenAIAccelerator {
   adoptionCurve: AdoptionPoint[];
   implementationCost: number;
   trainingOverhead: number;
+  effectivenessMultiplier: number; // Added this property
   tags?: string[];
   aiCapabilities?: string[];
   createdAt?: Date;

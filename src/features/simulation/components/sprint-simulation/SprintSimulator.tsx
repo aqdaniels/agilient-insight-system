@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -174,7 +173,7 @@ const SprintSimulator: React.FC<SprintSimulatorProps> = ({
             Team Size: {config.teamSize}
           </Badge>
           <Button 
-            variant="primary" 
+            variant="default" 
             onClick={runSimulation}
           >
             <Play className="mr-2 h-4 w-4" />

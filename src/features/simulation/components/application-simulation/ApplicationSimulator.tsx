@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Card, CardContent } from "@/components/ui/card";
@@ -167,7 +166,7 @@ const ApplicationSimulator: React.FC<ApplicationSimulatorProps> = ({
             </Badge>
           )}
           <Button 
-            variant="primary" 
+            variant="default" 
             onClick={runSimulation}
             disabled={config.applications.length === 0}
           >
