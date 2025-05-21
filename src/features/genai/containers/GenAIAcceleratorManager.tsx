@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GenAIAccelerator } from '../types';
@@ -9,12 +9,35 @@ import ROIAnalysisDashboard from '../components/ROIAnalysisDashboard';
 import ComparisonView from '../components/ComparisonView';
 import { Button, Card } from '@/components/design-system';
 import { Plus } from 'lucide-react';
+import { useAppContext } from '@/contexts/AppContext';
+import WorkflowActions from '@/components/navigation/WorkflowActions';
 
 const GenAIAcceleratorManager: React.FC = () => {
+  const { 
+    accelerators: globalAccelerators, 
+    addAccelerator: addGlobalAccelerator,
+    updateAccelerator: updateGlobalAccelerator,
+    selectedAcceleratorId: globalSelectedId,
+    setSelectedAcceleratorId: setGlobalSelectedId
+  } = useAppContext();
+  
   const [accelerators, setAccelerators] = useState<GenAIAccelerator[]>([]);
   const [selectedAccelerator, setSelectedAccelerator] = useState<GenAIAccelerator | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [activeTab, setActiveTab] = useState("definition");
+  
+  // Sync with global context
+  useEffect(() => {
+    setAccelerators(globalAccelerators);
+    
+    if (globalSelectedId) {
+      const selected = globalAccelerators.find(acc => acc.id === globalSelectedId);
+      if (selected) {
+        setSelectedAccelerator(selected);
+        setIsCreating(false);
+      }
+    }
+  }, [globalAccelerators, globalSelectedId]);
   
   const handleCreateNew = () => {
     const newAccelerator: GenAIAccelerator = {
@@ -31,12 +54,11 @@ const GenAIAcceleratorManager: React.FC = () => {
       ],
       implementationCost: 0,
       trainingOverhead: 0,
-      effectivenessMultiplier: 1.5, // Added the missing effectivenessMultiplier property with a default value
+      effectivenessMultiplier: 1.5,
       tags: [],
       aiCapabilities: []
     };
     
-    setAccelerators([...accelerators, newAccelerator]);
     setSelectedAccelerator(newAccelerator);
     setIsCreating(true);
     setActiveTab("definition");
@@ -44,18 +66,18 @@ const GenAIAcceleratorManager: React.FC = () => {
   
   const handleSaveAccelerator = (accelerator: GenAIAccelerator) => {
     if (isCreating) {
-      setAccelerators([...accelerators, accelerator]);
+      addGlobalAccelerator(accelerator);
       setIsCreating(false);
     } else {
-      setAccelerators(accelerators.map(acc => 
-        acc.id === accelerator.id ? accelerator : acc
-      ));
+      updateGlobalAccelerator(accelerator);
     }
     setSelectedAccelerator(accelerator);
+    setGlobalSelectedId(accelerator.id);
   };
   
   const handleSelectAccelerator = (accelerator: GenAIAccelerator) => {
     setSelectedAccelerator(accelerator);
+    setGlobalSelectedId(accelerator.id);
     setIsCreating(false);
   };
 
@@ -73,6 +95,8 @@ const GenAIAcceleratorManager: React.FC = () => {
           Create New Accelerator
         </Button>
       </div>
+      
+      <WorkflowActions />
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1 space-y-4">

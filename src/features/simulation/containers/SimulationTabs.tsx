@@ -11,60 +11,11 @@ import {
   BarChart2, 
   Calendar 
 } from "lucide-react";
-import { GenAIAccelerator } from "@/features/genai/types";
-
-// Mock accelerators for demonstration
-const mockAccelerators: GenAIAccelerator[] = [
-  {
-    id: "acc1",
-    name: "Code Copilot Pro",
-    description: "AI-powered code completion and generation tool that helps developers write code faster and with fewer errors.",
-    applicableSkills: ["Frontend", "Backend"],
-    taskTypeImpacts: { "development": 0.7, "testing": 0.3 },
-    adoptionCurve: [
-      { timePoint: 0, effectivenessPercent: 0 },
-      { timePoint: 1, effectivenessPercent: 0.3 },
-      { timePoint: 3, effectivenessPercent: 0.7 },
-      { timePoint: 6, effectivenessPercent: 0.9 }
-    ],
-    implementationCost: 3,
-    trainingOverhead: 2,
-    effectivenessMultiplier: 1.6
-  },
-  {
-    id: "acc2",
-    name: "Documentation Assistant",
-    description: "AI tool that automates creation of technical documentation, API references, and user guides based on code and requirements.",
-    applicableSkills: ["Documentation", "Frontend", "Backend"],
-    taskTypeImpacts: { "documentation": 0.8, "development": 0.2 },
-    adoptionCurve: [
-      { timePoint: 0, effectivenessPercent: 0 },
-      { timePoint: 1, effectivenessPercent: 0.5 },
-      { timePoint: 3, effectivenessPercent: 0.8 }
-    ],
-    implementationCost: 2,
-    trainingOverhead: 1,
-    effectivenessMultiplier: 1.4
-  },
-  {
-    id: "acc3",
-    name: "Test Generation Suite",
-    description: "AI-powered testing tool that automatically generates test cases based on code changes and requirements.",
-    applicableSkills: ["Testing", "QA"],
-    taskTypeImpacts: { "testing": 0.9, "development": 0.1 },
-    adoptionCurve: [
-      { timePoint: 0, effectivenessPercent: 0 },
-      { timePoint: 2, effectivenessPercent: 0.4 },
-      { timePoint: 4, effectivenessPercent: 0.7 },
-      { timePoint: 8, effectivenessPercent: 0.9 }
-    ],
-    implementationCost: 4,
-    trainingOverhead: 3,
-    effectivenessMultiplier: 1.7
-  }
-];
+import { useAppContext } from '@/contexts/AppContext';
+import WorkflowActions from '@/components/navigation/WorkflowActions';
 
 const SimulationTabs: React.FC = () => {
+  const { accelerators } = useAppContext();
   const [activeTab, setActiveTab] = useState("backlog-based");
   
   const breadcrumbsItems = [
@@ -80,6 +31,8 @@ const SimulationTabs: React.FC = () => {
         <h1 className="text-3xl font-bold mt-2">Simulation Setup</h1>
         <p className="text-muted-foreground">Configure and run delivery scenarios</p>
       </div>
+
+      <WorkflowActions />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-3 w-full">
@@ -106,13 +59,13 @@ const SimulationTabs: React.FC = () => {
           
           <TabsContent value="application-based" className="mt-0 space-y-6">
             <Card className="p-6">
-              <ApplicationSimulator availableAccelerators={mockAccelerators} />
+              <ApplicationSimulator availableAccelerators={accelerators} />
             </Card>
           </TabsContent>
           
           <TabsContent value="sprint-based" className="mt-0 space-y-6">
             <Card className="p-6">
-              <SprintSimulator availableAccelerators={mockAccelerators} />
+              <SprintSimulator availableAccelerators={accelerators} />
             </Card>
           </TabsContent>
         </div>
