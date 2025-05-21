@@ -14,9 +14,17 @@ interface TeamCompositionEditorProps {
   team: TeamConfiguration;
   onTeamChange: (team: TeamConfiguration) => void;
   isEditing: boolean;
+  onAddMember?: () => void;
+  onRemoveMember?: (memberId: string) => void;
 }
 
-const TeamCompositionEditor: React.FC<TeamCompositionEditorProps> = ({ team, onTeamChange, isEditing }) => {
+const TeamCompositionEditor: React.FC<TeamCompositionEditorProps> = ({ 
+  team, 
+  onTeamChange, 
+  isEditing,
+  onAddMember,
+  onRemoveMember 
+}) => {
   const [isAddingMember, setIsAddingMember] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
 
@@ -28,7 +36,11 @@ const TeamCompositionEditor: React.FC<TeamCompositionEditorProps> = ({ team, onT
   };
 
   const handleAddMember = () => {
-    setIsAddingMember(true);
+    if (onAddMember) {
+      onAddMember();
+    } else {
+      setIsAddingMember(true);
+    }
   };
 
   const handleEditMember = (member: TeamMember) => {
@@ -36,11 +48,15 @@ const TeamCompositionEditor: React.FC<TeamCompositionEditorProps> = ({ team, onT
   };
 
   const handleRemoveMember = (memberId: string) => {
-    onTeamChange({
-      ...team,
-      members: team.members.filter(member => member.id !== memberId)
-    });
-    toast.success("Team member removed");
+    if (onRemoveMember) {
+      onRemoveMember(memberId);
+    } else {
+      onTeamChange({
+        ...team,
+        members: team.members.filter(member => member.id !== memberId)
+      });
+      toast.success("Team member removed");
+    }
   };
 
   const handleMemberFormSubmit = (member: TeamMember) => {

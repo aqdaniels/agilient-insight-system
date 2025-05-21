@@ -5,7 +5,7 @@ import { Button } from "@/components/design-system";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/design-system";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, Users, BarChart2, Gauge, Calendar, Lightbulb } from "lucide-react";
+import { Save, Users, BarChart2, Gauge, Calendar, Lightbulb, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 import TeamCompositionEditor from "../components/TeamCompositionEditor";
@@ -14,6 +14,7 @@ import VelocityTrendChart from "../components/VelocityTrendChart";
 import TeamOptimizationView from "../components/TeamOptimizationView";
 import WorkingPatternConfig from "../components/WorkingPatternConfig";
 import VelocityDataTable from "../components/VelocityDataTable";
+import { v4 as uuidv4 } from "uuid";
 
 // Types
 export interface Skill {
@@ -166,6 +167,39 @@ const TeamConfigurator: React.FC = () => {
     setIsEditing(true);
   };
 
+  const handleAddMember = () => {
+    if (!activeTeam) return;
+    
+    const newMember: TeamMember = {
+      id: uuidv4(),
+      name: "New Team Member",
+      role: "Developer",
+      skills: [],
+      costRate: 100,
+      availability: 100,
+      aiAdoptionLevel: 50,
+      workingDays: [true, true, true, true, true]
+    };
+    
+    setActiveTeam({
+      ...activeTeam,
+      members: [...activeTeam.members, newMember]
+    });
+    
+    toast.success("New team member added");
+  };
+  
+  const handleRemoveMember = (memberId: string) => {
+    if (!activeTeam) return;
+    
+    setActiveTeam({
+      ...activeTeam,
+      members: activeTeam.members.filter(member => member.id !== memberId)
+    });
+    
+    toast.success("Team member removed");
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -196,13 +230,22 @@ const TeamConfigurator: React.FC = () => {
         <h2 className="text-2xl font-bold">Team Configuration</h2>
         <div className="flex space-x-2">
           {isEditing ? (
-            <Button 
-              variant="primary" 
-              onClick={handleSaveConfiguration}
-              leftIcon={<Save size={16} />}
-            >
-              Save Changes
-            </Button>
+            <>
+              <Button 
+                variant="outline" 
+                onClick={handleAddMember}
+                leftIcon={<UserPlus size={16} />}
+              >
+                Add Team Member
+              </Button>
+              <Button 
+                variant="primary" 
+                onClick={handleSaveConfiguration}
+                leftIcon={<Save size={16} />}
+              >
+                Save Changes
+              </Button>
+            </>
           ) : (
             <Button 
               variant="outline" 
@@ -242,6 +285,8 @@ const TeamConfigurator: React.FC = () => {
                   team={activeTeam} 
                   onTeamChange={handleTeamUpdate} 
                   isEditing={isEditing} 
+                  onAddMember={handleAddMember}
+                  onRemoveMember={handleRemoveMember}
                 />
               </Card>
             </div>
