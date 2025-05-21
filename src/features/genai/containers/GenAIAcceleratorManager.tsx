@@ -31,6 +31,7 @@ const GenAIAcceleratorManager: React.FC = () => {
       ],
       implementationCost: 0,
       trainingOverhead: 0,
+      effectivenessMultiplier: 1.5, // Added the missing effectivenessMultiplier property with a default value
       tags: [],
       aiCapabilities: []
     };
