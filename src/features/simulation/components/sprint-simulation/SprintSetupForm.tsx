@@ -136,7 +136,7 @@ const SprintSetupForm: React.FC<SprintSetupFormProps> = ({
                     <SelectValue placeholder="Select an accelerator" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No Accelerator</SelectItem>
+                    <SelectItem value="none">No Accelerator</SelectItem>
                     {availableAccelerators.map(acc => (
                       <SelectItem key={acc.id} value={acc.id}>
                         {acc.name}

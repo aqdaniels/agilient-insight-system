@@ -124,13 +124,14 @@ const ScenarioDefinition: React.FC<ScenarioDefinitionProps> = ({
                 <FormItem>
                   <FormLabel>Baseline Scenario</FormLabel>
                   <Select 
-                    value={scenario.baselineScenarioId} 
-                    onValueChange={(value) => handleChange('baselineScenarioId', value)}
+                    value={scenario.baselineScenarioId || "none"} 
+                    onValueChange={(value) => handleChange('baselineScenarioId', value === "none" ? null : value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select baseline scenario" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">No baseline</SelectItem>
                       {baselineScenarios.map((base) => (
                         <SelectItem key={base.id} value={base.id}>
                           {base.name}
@@ -152,13 +153,14 @@ const ScenarioDefinition: React.FC<ScenarioDefinitionProps> = ({
                 <FormItem>
                   <FormLabel>Associated Project</FormLabel>
                   <Select 
-                    value={scenario.projectId} 
-                    onValueChange={(value) => handleChange('projectId', value)}
+                    value={scenario.projectId || "none"} 
+                    onValueChange={(value) => handleChange('projectId', value === "none" ? "" : value)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select project" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="none">No project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem key={project.id} value={project.id}>
                           {project.name}

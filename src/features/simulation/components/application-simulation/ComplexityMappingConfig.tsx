@@ -187,7 +187,7 @@ const ComplexityMappingConfig: React.FC<ComplexityMappingConfigProps> = ({
                       <SelectValue placeholder="Select an accelerator" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
                       {availableAccelerators.map(acc => (
                         <SelectItem key={acc.id} value={acc.id}>
                           {acc.name}
