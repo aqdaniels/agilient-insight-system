@@ -10,6 +10,11 @@ import {
   Legend,
   Tooltip
 } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@/components/ui/chart";
 
 interface TeamCompositionChartProps {
   members: TeamMember[];
@@ -46,59 +51,63 @@ const TeamCompositionChart: React.FC<TeamCompositionChartProps> = ({ members }) 
 
   return (
     <div className="space-y-6 p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="h-64">
-          <h4 className="text-sm font-medium text-center mb-2">Role Distribution</h4>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={roleData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => {
-                  if (typeof percent === 'number') {
-                    return `${name}: ${(percent * 100).toFixed(0)}%`;
-                  }
-                  return `${name}`;
-                }}
-              >
-                {roleData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => [`${value} member(s)`, 'Count']} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="p-4">
+          <h4 className="text-sm font-medium text-center mb-4">Role Distribution</h4>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={roleData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => {
+                    if (typeof percent === 'number') {
+                      return `${name}: ${(percent * 100).toFixed(0)}%`;
+                    }
+                    return `${name}`;
+                  }}
+                >
+                  {roleData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [`${value} member(s)`, 'Count']} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
 
-        <div className="h-64">
-          <h4 className="text-sm font-medium text-center mb-2">Team Skills</h4>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={skillData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#82ca9d"
-                dataKey="value"
-                label={({ name }) => name}
-              >
-                {skillData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(value) => {
-                const numValue = typeof value === 'number' ? value.toFixed(1) : value;
-                return [`Level: ${numValue}/5`, 'Avg. Proficiency'];
-              }} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        <Card className="p-4">
+          <h4 className="text-sm font-medium text-center mb-4">Team Skills</h4>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={skillData}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#82ca9d"
+                  dataKey="value"
+                  label={({ name }) => name}
+                >
+                  {skillData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => {
+                  const numValue = typeof value === 'number' ? value.toFixed(1) : value;
+                  return [`Level: ${numValue}/5`, 'Avg. Proficiency'];
+                }} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
       </div>
 
       <div>
