@@ -135,7 +135,7 @@ const RequirementsToBacklog: React.FC = () => {
           {documentText && (
             <div className="mt-6 flex justify-end">
               <Button 
-                variant="default"
+                variant="primary"
                 rightIcon={<ArrowRight size={16} />}
                 onClick={() => setActiveTab("stories")}
               >
@@ -163,7 +163,7 @@ const RequirementsToBacklog: React.FC = () => {
           {backlogItems.length > 0 && (
             <div className="mt-6 flex justify-end">
               <Button 
-                variant="default"
+                variant="primary"
                 rightIcon={<ArrowRight size={16} />}
                 onClick={() => setActiveTab("team")}
               >
