@@ -180,7 +180,7 @@ const ComplexityMappingConfig: React.FC<ComplexityMappingConfigProps> = ({
                     value={field.value}
                     onValueChange={(value) => {
                       field.onChange(value);
-                      onSelectAccelerator(value || null);
+                      onSelectAccelerator(value === "none" ? null : value);
                     }}
                   >
                     <SelectTrigger>

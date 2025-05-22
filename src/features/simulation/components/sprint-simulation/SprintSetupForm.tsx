@@ -126,10 +126,10 @@ const SprintSetupForm: React.FC<SprintSetupFormProps> = ({
               <FormItem>
                 <FormLabel>GenAI Accelerator</FormLabel>
                 <Select
-                  value={field.value || ""}
+                  value={field.value || "none"}
                   onValueChange={(value) => {
                     field.onChange(value);
-                    onSelectAccelerator(value === "" ? null : value);
+                    onSelectAccelerator(value === "none" ? null : value);
                   }}
                 >
                   <SelectTrigger>

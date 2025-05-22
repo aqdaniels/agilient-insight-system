@@ -6,10 +6,12 @@ import { Breadcrumbs } from "@/components/design-system";
 import SimulationSetup from './SimulationSetup';
 import ApplicationSimulator from '../components/application-simulation/ApplicationSimulator';
 import SprintSimulator from '../components/sprint-simulation/SprintSimulator';
+import RequirementsToBacklog from '@/features/backlog/containers/RequirementsToBacklog';
 import { 
   FileText, 
   BarChart2, 
-  Calendar 
+  Calendar,
+  Upload
 } from "lucide-react";
 import { useAppContext } from '@/contexts/AppContext';
 import WorkflowActions from '@/components/navigation/WorkflowActions';
@@ -35,7 +37,7 @@ const SimulationTabs: React.FC = () => {
       <WorkflowActions />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-3 w-full">
+        <TabsList className="grid grid-cols-4 w-full">
           <TabsTrigger value="backlog-based" className="flex items-center gap-2">
             <FileText size={16} />
             <span>Backlog-Based</span>
@@ -47,6 +49,10 @@ const SimulationTabs: React.FC = () => {
           <TabsTrigger value="sprint-based" className="flex items-center gap-2">
             <Calendar size={16} />
             <span>Sprint-Based</span>
+          </TabsTrigger>
+          <TabsTrigger value="requirements-based" className="flex items-center gap-2">
+            <Upload size={16} />
+            <span>Requirements-Based</span>
           </TabsTrigger>
         </TabsList>
         
@@ -66,6 +72,12 @@ const SimulationTabs: React.FC = () => {
           <TabsContent value="sprint-based" className="mt-0 space-y-6">
             <Card className="p-6">
               <SprintSimulator availableAccelerators={accelerators} />
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="requirements-based" className="mt-0 space-y-6">
+            <Card className="p-6">
+              <RequirementsToBacklog />
             </Card>
           </TabsContent>
         </div>
